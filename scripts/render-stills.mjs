@@ -22,6 +22,7 @@ const SHOTS = [
   { name: 'left', pos: [-150, R, 0], look: [0, R, 0] },
   { name: 'right', pos: [150, R, 0], look: [0, R, 0] },
   { name: 'motor-close', pos: [-34, R + 6, -58], look: [0, R - 2, -26] },
+  { name: 'blade-close', pos: [10, R + 4, 34], look: [0, R + 5, 0] },
 ];
 
 function run(cmd, args, opts = {}) {

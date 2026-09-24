@@ -2,11 +2,30 @@
 
 ## ⚠️ Discrepancy vs. task brief
 The brief describes 7 reference photos (front / back / two sides / close-ups). Only **5 JPEGs**
-were actually attached (`1.jpg`–`5.jpg`). There is no clean straight-on **back** photo — the
-back frame/motor bracket has to be inferred from the two close-up 3/4 shots (`3.jpg`, `4.jpg`)
-and the side view (`2.jpg`). Flagging this per the task's "tell me about disagreements" rule;
-proceeding with the closest reasonable reconstruction from what IS visible, and calling out
-every assumption below so it can be corrected later.
+were attached initially (`1.jpg`–`5.jpg`); 3 more close-ups (`6.jpg`–`8.jpg`) were sent
+afterward, once the first modelling pass got the blade shape wrong — see the update below.
+There is still no clean straight-on **back** photo — the back frame/motor bracket has to be
+inferred from the 3/4 shots and the side view. Flagging this per the task's "tell me about
+disagreements" rule; proceeding with the closest reasonable reconstruction from what IS
+visible, and calling out every assumption below so it can be corrected later.
+
+## Update: photos 6–8 (blade corrections)
+`6.jpg` (blade root, still mounted, seen through the guard), `7.jpg` (collar rolled-edge
+close-up), and `8.jpg` (a full blade, removed from the hub, on a table) corrected two
+mistakes from the first modelling pass:
+- The blade is **not** a narrow-root paddle that widens to a wide mid-section — it's a
+  **near-constant-width rectangular strip** almost its entire length. It only narrows in
+  the last ~1.5" near the black rubber root grommet. Rebuilt `src/parts/blades.js`
+  accordingly (constant ~5.8" chord instead of narrow-root-then-6.5"-paddle).
+  The tip is still cut at a shallow angle (not tapered to a point), confirmed by 8.jpg.
+- A **raised triangular stiffening rib** (embossed/pressed into the sheet metal) sits on
+  the blade face just above the root grommet, with a rivet through it, and "KHALEEQ FAN"
+  is stamped near it. Added the rib + rivet as geometry; left the stamped text as
+  unreadable surface detail rather than reproducing that specific sub-supplier's brand
+  name, per the brief's "no extra logos" rule (Khaleeq Fan appears to be a blade
+  component supplier, distinct from the Click Engineer product brand).
+- `7.jpg` confirms the collar's rolled edge is a simple outward curl, consistent with
+  what was already modelled from `2.jpg`.
 
 ## Photo inventory
 - `1.jpg` — Fan leaning at an angle against a wall/shutter, front (blade) side facing camera,

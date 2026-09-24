@@ -91,6 +91,16 @@ None of these affect the CONFIRMED dimensions and are minor enough to leave as-i
 the "keep it subtle" / no-invented-detail guidance, but are called out here rather than
 left unmentioned.
 
+## Update: blade shape correction (photos 6–8)
+The first pass modelled the blade as a narrow-root paddle widening to a ~6.5" mid-section
+— wrong. Close-ups of the blade root (6.jpg) and a blade removed from the hub (8.jpg)
+show it is a **near-constant-width rectangular strip** (~5.8" chord) for almost its full
+length, narrowing only in the last ~1.5" at the black rubber root grommet, with a raised
+triangular stiffening rib + rivet on the face just above the grommet. `blade-close.png`
+(new) matches this corrected shape, root grommet, and rib placement against 6.jpg/8.jpg.
+The video render was restarted after this fix since the first full render used the old,
+incorrect blade shape.
+
 ## Outstanding, acknowledged simplifications
 - Blade root offset from the radial centreline (real fan blades are often not perfectly
   radially symmetric) was simplified to a symmetric paddle for tractability; not

@@ -1,17 +1,22 @@
 import * as THREE from 'three';
 import { DIMS } from '../constants.js';
 
-const ROOT_R = 2.0; // where the paddle shape begins (hub stub covers 0..ROOT_R)
+// Corrected against close-up photos of a blade removed from the hub
+// (reference/6.jpg, 8.jpg): the blade is NOT a narrow-root paddle that
+// widens — it is a near-constant-width rectangular strip almost its whole
+// length, only pinching in for the last ~1.5" where it meets the black
+// rubber root grommet, with the tip cut at a shallow angle (not tapered
+// to a point). A raised triangular stiffening rib sits on the face just
+// above the grommet, with a rivet through it.
+const ROOT_R = 2.0; // where the paddle shape begins (rubber grommet covers 0..ROOT_R)
 const TIP_R = DIMS.bladeTipRadius; // 21" — CONFIRMED
-const WIDEN_END = 5.5; // span position where chord reaches full width
-const TIP_TAPER_START = TIP_R - 2.2;
-const TIP_TRIM = 0.8; // trailing edge stops this far short of the tip (creates the angled tip cut)
+const WIDEN_END = 3.6; // quick transition to full width, close to the root
+const TIP_TRIM = 0.9; // trailing edge stops this far short of the tip (angled cut)
 
-const ROOT_HALF_CHORD = 0.8;
-const FULL_HALF_CHORD = 3.25; // 6.5" chord
-const TIP_HALF_CHORD = 2.4;
+const ROOT_HALF_CHORD = 1.0;
+const FULL_HALF_CHORD = 2.9; // ~5.8" chord, held constant almost to the tip
 
-const THICKNESS = 0.22;
+const THICKNESS = 0.2;
 const TWIST_ROOT_DEG = 28; // pitch at the root
 const TWIST_TIP_DEG = 15; // pitch at the tip
 
@@ -25,11 +30,7 @@ function halfChordAt(y) {
     const t = smoothstep(ROOT_R, WIDEN_END, y);
     return THREE.MathUtils.lerp(ROOT_HALF_CHORD, FULL_HALF_CHORD, t);
   }
-  if (y <= TIP_TAPER_START) {
-    return FULL_HALF_CHORD;
-  }
-  const t = smoothstep(TIP_TAPER_START, TIP_R, y);
-  return THREE.MathUtils.lerp(FULL_HALF_CHORD, TIP_HALF_CHORD, t);
+  return FULL_HALF_CHORD;
 }
 
 function twistAt(y) {
@@ -39,7 +40,7 @@ function twistAt(y) {
 
 function buildPaddleShape() {
   const shape = new THREE.Shape();
-  const N = 28;
+  const N = 24;
 
   // Leading edge, root -> tip (full span).
   const leSpan = TIP_R - ROOT_R;
@@ -83,24 +84,50 @@ function applyTwist(geometry) {
 }
 
 function buildRootStub(materials) {
-  // Narrow conical stub where the blade root meets the hub (CylinderGeometry's
-  // axis is already Y, which is our spanwise direction, so no rotation needed).
+  // Black rubber grommet where the blade root meets the hub.
   const mesh = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.95, ROOT_R, 12), materials.blade);
   mesh.position.y = ROOT_R / 2;
   return mesh;
+}
+
+function buildRootRib(materials) {
+  // Raised triangular stiffening rib pressed into the blade face just above
+  // the root grommet, with a small rivet through it (reference/8.jpg). This
+  // small feature is approximated with a single fixed twist (rather than the
+  // paddle's smooth per-vertex twist) since it spans a short, near-root run
+  // where the pitch angle barely changes.
+  const shape = new THREE.Shape();
+  shape.moveTo(0, 0);
+  shape.lineTo(-0.85, 2.1);
+  shape.lineTo(0.85, 2.1);
+  shape.closePath();
+  const geo = new THREE.ExtrudeGeometry(shape, { depth: 0.06, bevelEnabled: false });
+  geo.translate(0, 0, -0.03);
+  const rib = new THREE.Mesh(geo, materials.blade);
+  rib.position.set(0, ROOT_R + 0.15, THICKNESS / 2);
+
+  const rivet = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.13, 0.1, 8), materials.bolt);
+  rivet.rotation.x = Math.PI / 2;
+  rivet.position.set(0, ROOT_R + 0.9, THICKNESS / 2 + 0.06);
+
+  const group = new THREE.Group();
+  group.add(rib, rivet);
+  group.rotation.y = twistAt(ROOT_R + 1);
+  return group;
 }
 
 export function createBlade(materials) {
   const group = new THREE.Group();
 
   const shape = buildPaddleShape();
-  const geo = new THREE.ExtrudeGeometry(shape, { depth: THICKNESS, bevelEnabled: false, curveSegments: 1 });
+  const geo = new THREE.ExtrudeGeometry(shape, { depth: THICKNESS, bevelEnabled: true, bevelThickness: 0.05, bevelSize: 0.05, bevelSegments: 2, curveSegments: 1 });
   geo.translate(0, 0, -THICKNESS / 2);
   applyTwist(geo);
 
   const paddle = new THREE.Mesh(geo, materials.blade);
   group.add(paddle);
   group.add(buildRootStub(materials));
+  group.add(buildRootRib(materials));
 
   return group;
 }
