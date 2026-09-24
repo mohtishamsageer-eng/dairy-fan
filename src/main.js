@@ -17,7 +17,7 @@ const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffe
 renderer.setPixelRatio(1);
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.05;
+renderer.toneMappingExposure = 0.95;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -34,10 +34,10 @@ const pmrem = new THREE.PMREMGenerator(renderer);
 scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
 
 // --- Lighting -------------------------------------------------------------
-const hemi = new THREE.HemisphereLight(0xbfd9e8, 0x1a1d1f, 0.55);
+const hemi = new THREE.HemisphereLight(0xbfd9e8, 0x1a1d1f, 0.38);
 scene.add(hemi);
 
-const key = new THREE.DirectionalLight(0xfff2df, 1.6);
+const key = new THREE.DirectionalLight(0xfff2df, 1.05);
 key.position.set(120, 200, 160);
 key.castShadow = true;
 key.shadow.mapSize.set(2048, 2048);
@@ -50,11 +50,11 @@ key.shadow.camera.bottom = -140;
 key.shadow.bias = -0.0015;
 scene.add(key);
 
-const fill = new THREE.DirectionalLight(0xcfe8f5, 0.6);
+const fill = new THREE.DirectionalLight(0xcfe8f5, 0.4);
 fill.position.set(-150, 90, -80);
 scene.add(fill);
 
-const rim = new THREE.DirectionalLight(0xffffff, 0.8);
+const rim = new THREE.DirectionalLight(0xffffff, 0.5);
 rim.position.set(-40, 140, -220);
 scene.add(rim);
 
