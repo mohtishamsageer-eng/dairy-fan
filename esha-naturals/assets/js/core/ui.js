@@ -433,7 +433,7 @@
     foot.hidden = false;
     foot.innerHTML = `${totalsHtml()}
       <a class="btn btn--gold btn--block" href="checkout.html">Proceed to Checkout ${icon('arrowRight')}</a>
-      <p class="drawer__note">${icon('cash')} Cash on Delivery · ${esc(d.timeText || '')}</p>`;
+      <p class="drawer__note">${icon('cash')} Cash on Delivery · ${esc(d.shortTimeText || '')} after confirmation</p>`;
   }
 
   /* ------------------------------------------------------------------
