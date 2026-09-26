@@ -129,9 +129,16 @@
           <h2 class="form-card__title" id="h-payment"><span class="form-card__num">3</span>Payment</h2>
           <label class="pay-option">
             <input type="radio" name="payment" value="cod" checked>
-            <div><strong>Cash on Delivery (COD)</strong><span>Pay in cash when your order arrives. No advance payment.</span></div>
+            <div><strong>Cash on Delivery (COD)</strong><span>Pay in cash when your order arrives.</span></div>
             ${icon('cash')}
           </label>
+          ${
+            cfg.advancePayment && cfg.advancePayment.enabled
+              ? `<p class="confirm-note">${icon('wallet')}<span><strong>Optional:</strong> after placing your order you can send a small advance by ${esc(
+                  (cfg.advancePayment.accounts || []).map((a) => a.method.replace(/\s*\(.*\)/, '')).join(' or ')
+                )} to confirm it on priority. It is deducted from your total. Your order is received either way.</span></p>`
+              : ''
+          }
           <p class="confirm-note">${icon('phone')}<span>After you place your order, our team will call you to confirm it. Delivery takes <strong>${esc(d.timeText || '')}</strong>.</span></p>
         </section>
 

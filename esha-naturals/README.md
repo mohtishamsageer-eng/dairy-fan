@@ -8,6 +8,9 @@ categories, add to cart and place **Cash on Delivery** orders from anywhere in P
 - **Every order is emailed to `eshanaturals0@gmail.com`** with all the details the customer filled in
   (no WhatsApp order messages). Contact-form messages arrive by email too.
 - WhatsApp **0317 7161578** is used only for the "Chat with us" buttons
+- After placing an order the customer sees a popup to send an optional **small advance** (JazzCash or Bank of Punjab).
+  The order email is sent first, so you get every order whether or not they pay. If they tap
+  *"I've sent the advance"*, a second email tells you the account and transaction ID.
 - 6 short **Journal** articles on the benefits of the oils
 - About, Contact, FAQ, Shipping / Returns / Privacy pages
 - Works on mobile and desktop, fast, no monthly fees: a plain static website (HTML, CSS, JavaScript)
@@ -60,7 +63,8 @@ To preview on your computer, double-click `index.html` or `dist/esha-naturals.ht
 | `phone` | `0317 7161578` | Number shown on the website |
 | `email` | `eshanaturals0@gmail.com` | Email shown on the website |
 | `delivery.fee` / `delivery.freeAbove` | Rs 200, free over Rs 2,000 | Delivery charges |
-| `social` | empty | Instagram / Facebook / TikTok / YouTube links |
+| `advancePayment` | JazzCash 0313 7996525 · BOP 5040453415800018 (Esha Tariq) | Optional small advance shown in a popup after the order. `amount: 0` says "a small advance"; set e.g. `200` to ask for Rs 200 |
+| `social` | Instagram, Facebook, TikTok | Social links in the footer, mobile menu and contact page |
 | `orderEndpoint` | empty | Optional Google Sheet order log |
 
 ## 4. Everyday changes

@@ -44,11 +44,22 @@ ESHA.config = {
 
   maxQtyPerItem: 10,
 
+  // Optional small advance, shown in a popup after the order is placed.
+  // The order is emailed to you whether or not the customer pays the advance.
+  advancePayment: {
+    enabled: true,
+    amount: 0, // e.g. 200 to ask for Rs 200; 0 = just "a small advance"
+    accounts: [
+      { method: 'JazzCash', number: '03137996525', title: 'Esha Tariq' },
+      { method: 'Bank of Punjab (BOP)', number: '5040453415800018', title: 'Esha Tariq' }
+    ]
+  },
+
   // Social links — leave '' to hide an icon.
   social: {
-    instagram: '',
-    facebook: '',
-    tiktok: '',
+    instagram: 'https://www.instagram.com/eshanaturals0',
+    facebook: 'https://www.facebook.com/share/19cwkScHVn/',
+    tiktok: 'https://www.tiktok.com/@eshanaturals0',
     youtube: ''
   }
 };

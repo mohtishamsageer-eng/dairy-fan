@@ -30,8 +30,17 @@
       `<div class="contact-card">${icon('truck')}<div><strong>Delivery across Pakistan</strong><span>${esc((cfg.delivery && cfg.delivery.timeText) || '')}</span></div></div>`
     );
     cards.push(
-      `<div class="contact-card">${icon('cash')}<div><strong>Cash on Delivery</strong><span>No advance payment, pay when your order arrives</span></div></div>`
+      `<div class="contact-card">${icon('cash')}<div><strong>Cash on Delivery</strong><span>Pay when your order arrives (small advance optional)</span></div></div>`
     );
+    const soc = cfg.social || {};
+    const socialNames = { instagram: 'Instagram', facebook: 'Facebook', tiktok: 'TikTok', youtube: 'YouTube' };
+    Object.keys(socialNames)
+      .filter((k) => soc[k])
+      .forEach((k) =>
+        cards.push(
+          `<a class="contact-card contact-card--${k}" href="${esc(soc[k])}" target="_blank" rel="noopener">${icon(k)}<div><strong>${socialNames[k]}</strong><span>Follow @eshanaturals0 for tips and offers</span></div></a>`
+        )
+      );
     const cardsEl = $('[data-contact-cards]');
     if (cardsEl) cardsEl.innerHTML = cards.join('');
 

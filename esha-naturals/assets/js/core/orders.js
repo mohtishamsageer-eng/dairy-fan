@@ -120,7 +120,7 @@
         Subtotal: money(order.subtotal),
         'Delivery charges': order.delivery ? money(order.delivery) : 'Free',
         'TOTAL (Cash on Delivery)': money(order.total),
-        Payment: order.payment,
+        Payment: E.config.advancePayment && E.config.advancePayment.enabled ? `${order.payment} (advance optional)` : order.payment,
         'Order notes': order.notes || '-',
         Website: window.location.origin + window.location.pathname
       };
@@ -155,6 +155,30 @@
           'Mobile number': phone || '-',
           Message: message,
           Website: window.location.origin + window.location.pathname
+        },
+        15000
+      );
+    },
+
+    // The customer reports an advance payment from the popup after the order.
+    async sendPayment(order, { method, reference }) {
+      const cfg = E.config;
+      if (!isLive()) return { ok: true, demo: true };
+      if (!cfg.orderEmail) return { ok: false, message: 'No email configured' };
+      const c = order.customer;
+      return postJSON(
+        `https://formsubmit.co/ajax/${encodeURIComponent(cfg.orderEmail)}`,
+        {
+          _subject: `Advance payment sent for order ${order.id} (${c.name})`,
+          _template: 'table',
+          _captcha: 'false',
+          'Order ID': order.id,
+          'Customer name': c.name,
+          'Mobile number': c.phone,
+          'Paid to': method,
+          'Transaction ID / sender number': reference || '-',
+          'Order total': money(order.total),
+          Note: 'Please check your account before confirming this advance.'
         },
         15000
       );

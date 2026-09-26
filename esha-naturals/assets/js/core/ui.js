@@ -20,12 +20,15 @@
     </div>`;
   };
 
+  // 250 ml bottles get "is-small" so they always show smaller than the 1 litre bottles
+  const isSmall = (p) => /ml/i.test(p.size);
   const productImg = (p, { size = 'sm', eager = false, cls = '' } = {}) => {
     const sm = size === 'sm';
     const src = sm ? p.images.productSm : p.images.product;
     const w = sm ? p.images.smWidth : p.images.width;
     const h = sm ? p.images.smHeight : p.images.height;
-    return `<img class="${cls}" src="${U.asset(src)}" alt=""${esc(p.name)}, ${esc(p.size)} bottle" width="${w}" height="${h}" loading="${eager ? 'eager' : 'lazy'}" decoding="async">`;
+    const classes = `${cls} ${isSmall(p) ? 'is-small' : 'is-large'}`.trim();
+    return `<img class="${classes}" src="${U.asset(src)}" alt="${esc(p.name)}, ${esc(p.size)} bottle" width="${w}" height="${h}" loading="${eager ? 'eager' : 'lazy'}" decoding="async">`;
   };
 
   const productCard = (p, { level = 3, delay = 0, eager = false } = {}) => {
@@ -54,7 +57,7 @@
   const articleCard = (a, { level = 3, delay = 0, featured = false } = {}) => {
     const topic = (E.topics || []).find((t) => t.id === a.topic);
     return `<article class="a-card${featured ? ' a-card--featured' : ''} reveal" style="--d:${delay}s">
-      <div class="a-card__media"><img src="${U.asset(a.cover)}" alt=""${esc(a.coverAlt)}" width="720" height="480" loading="lazy" decoding="async"></div>
+      <div class="a-card__media"><img src="${U.asset(a.cover)}" alt="${esc(a.coverAlt)}" width="720" height="480" loading="lazy" decoding="async"></div>
       <div class="a-card__body">
         <p class="a-card__meta"><span>${esc(topic ? topic.name : '')}</span><span aria-hidden="true">·</span><span>${U.readingTime(a.body)} min read</span></p>
         <h${level} class="a-card__title"><a href="${U.articleUrl(a)}">${esc(a.title)}</a></h${level}>
@@ -212,7 +215,7 @@
       <div class="container header__inner">
         <button type="button" class="icon-btn header__menu" aria-label="Open menu" aria-controls="mobile-nav" aria-expanded="false" data-open-menu>${icon('menu')}</button>
         <a class="header__logo" href="index.html" aria-label="${esc(cfg.brand)}, home">
-          <img src="${U.asset('assets/images/brand/logo-horizontal-light.svg')}" alt="${esc(cfg.brand)}" width="183" height="79">
+          <img src="${U.asset('assets/images/brand/logo-horizontal.svg')}" alt="${esc(cfg.brand)}" width="183" height="79">
         </a>
         <nav class="header__nav" aria-label="Main">
           <ul>${NAV.filter((n) => n.key !== 'home')
@@ -241,7 +244,7 @@
       <div class="drawer__overlay" data-close></div>
       <div class="drawer__panel" role="dialog" aria-modal="true" aria-label="Menu" tabindex="-1">
         <div class="drawer__head">
-          <img src="${U.asset('assets/images/brand/logo-horizontal-light.svg')}" alt="${esc(cfg.brand)}" width="183" height="79" class="menu__logo">
+          <img src="${U.asset('assets/images/brand/logo-horizontal.svg')}" alt="${esc(cfg.brand)}" width="183" height="79" class="menu__logo">
           <button type="button" class="icon-btn" data-close aria-label="Close menu">${icon('close')}</button>
         </div>
         <nav class="menu__nav" aria-label="Mobile">
@@ -249,6 +252,7 @@
         </nav>
         <div class="menu__foot">
           <p class="menu__note">${icon('cash')} Cash on Delivery · ${esc(d.shortTimeText || '')}</p>
+          ${socialLinks('menu__socials')}
           ${wa ? `<a class="btn btn--wa btn--block" href="${wa}" target="_blank" rel="noopener">${icon('whatsapp')}<span>Chat on WhatsApp</span></a>` : ''}
           ${tel ? `<a class="btn btn--outline-light btn--block" href="${tel}">${icon('phone')}<span>Call ${esc(cfg.phone)}</span></a>` : ''}
         </div>
@@ -450,14 +454,14 @@
   /* ------------------------------------------------------------------
    * Footer
    * ------------------------------------------------------------------ */
-  function socialLinks() {
+  function socialLinks(cls = 'socials') {
     const s = cfg.social || {};
     const names = { instagram: 'Instagram', facebook: 'Facebook', tiktok: 'TikTok', youtube: 'YouTube' };
     const links = Object.keys(names)
       .filter((k) => s[k])
       .map((k) => `<a href="${esc(s[k])}" target="_blank" rel="noopener" aria-label="${names[k]}">${icon(k)}</a>`)
       .join('');
-    return links ? `<div class="socials">${links}</div>` : '';
+    return links ? `<div class="${cls}">${links}</div>` : '';
   }
 
   function renderFooter() {
@@ -612,7 +616,85 @@
     return input ? Math.max(1, parseInt(input.value, 10) || 1) : 1;
   }
 
+  /* ------------------------------------------------------------------
+   * Motion: a bottle flies into the cart, product cards tilt
+   * ------------------------------------------------------------------ */
+  const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Returns the flight time in ms, or 0 when nothing flew
+  function flyToCart(btn, id) {
+    if (reducedMotion()) return 0;
+    const p = U.getProduct(id);
+    const target = $$('.cart-btn').find((b) => b.getBoundingClientRect().width > 0);
+    if (!p || !target) return 0;
+    const scope = btn.closest('.p-card, .pdp__grid, .spotlight, .hero, .buybar') || document;
+    const img = scope.querySelector('img');
+    const from = (img || btn).getBoundingClientRect();
+    const to = target.getBoundingClientRect();
+    if (!from.width || to.top < -40) return 0;
+    const h = Math.min(Math.max(from.height, 60), 150);
+    const w = h * ((p.images.smWidth || 1) / (p.images.smHeight || 3));
+    const fly = document.createElement('img');
+    fly.className = 'fly-bottle';
+    fly.src = U.asset(p.images.productSm || p.images.product);
+    fly.alt = '';
+    fly.style.cssText = `left:${from.left + from.width / 2 - w / 2}px;top:${from.top + from.height / 2 - h / 2}px;width:${w}px;height:${h}px`;
+    document.body.appendChild(fly);
+    const dx = to.left + to.width / 2 - (from.left + from.width / 2);
+    const dy = to.top + to.height / 2 - (from.top + from.height / 2);
+    const ms = 700;
+    const anim = fly.animate(
+      [
+        { transform: 'translate(0, 0) scale(1) rotate(0deg)', opacity: 1 },
+        { transform: `translate(${dx * 0.45}px, ${dy * 0.45 - 90}px) scale(0.7) rotate(-12deg)`, opacity: 1, offset: 0.45 },
+        { transform: `translate(${dx}px, ${dy}px) scale(0.12) rotate(8deg)`, opacity: 0.4 }
+      ],
+      { duration: ms, easing: 'cubic-bezier(.5,0,.3,1)' }
+    );
+    const land = () => {
+      fly.remove();
+      target.classList.remove('is-receiving');
+      void target.offsetWidth;
+      target.classList.add('is-receiving');
+      setTimeout(() => target.classList.remove('is-receiving'), 600);
+    };
+    anim.onfinish = land;
+    anim.oncancel = () => fly.remove();
+    return ms - 120;
+  }
+
+  function bindCardTilt() {
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    let raf = 0;
+    document.addEventListener('pointermove', (e) => {
+      const card = e.target.closest && e.target.closest('.p-card');
+      const media = card && card.querySelector('.p-card__media');
+      if (!media || reducedMotion()) return;
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const r = media.getBoundingClientRect();
+        const x = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
+        const y = Math.min(1, Math.max(0, (e.clientY - r.top) / r.height));
+        media.style.setProperty('--ry', `${((x - 0.5) * 10).toFixed(2)}deg`);
+        media.style.setProperty('--rx', `${((0.5 - y) * 8).toFixed(2)}deg`);
+        media.style.setProperty('--gx', `${(x * 100).toFixed(1)}%`);
+        media.style.setProperty('--gy', `${(y * 100).toFixed(1)}%`);
+      });
+    });
+    document.addEventListener(
+      'pointerout',
+      (e) => {
+        const card = e.target.closest && e.target.closest('.p-card');
+        const media = card && card.querySelector('.p-card__media');
+        if (!media || card.contains(e.relatedTarget)) return;
+        ['--rx', '--ry', '--gx', '--gy'].forEach((k) => media.style.removeProperty(k));
+      },
+      true
+    );
+  }
+
   function bindGlobalEvents() {
+    bindCardTilt();
     document.addEventListener('click', (e) => {
       const add = e.target.closest('[data-add]');
       if (add) {
@@ -625,7 +707,11 @@
           return;
         }
         flashButton(add, 'Added');
-        if (add.dataset.noDrawer === undefined && cartDrawer) cartDrawer.open(add);
+        const flight = flyToCart(add, id);
+        if (add.dataset.noDrawer === undefined && cartDrawer) {
+          if (flight) setTimeout(() => document.contains(add) && cartDrawer.open(add), flight);
+          else cartDrawer.open(add);
+        }
         return;
       }
       const buy = e.target.closest('[data-buy]');
@@ -726,6 +812,7 @@
   E.ui = {
     priceHtml,
     productImg,
+    isSmall,
     productCard,
     articleCard,
     ornament,

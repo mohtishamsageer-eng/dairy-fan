@@ -125,7 +125,7 @@
         </div>
         <ul class="assure">
           <li>${icon('truck')}<span><strong>Delivery in ${esc(d.timeText || '')}</strong></span></li>
-          <li>${icon('cash')}<span><strong>Cash on Delivery</strong> all over Pakistan, no advance payment</span></li>
+          <li>${icon('cash')}<span><strong>Cash on Delivery</strong> all over Pakistan, small advance optional</span></li>
           <li>${icon('seal')}<span><strong>100% original</strong> Esha Naturals product</span></li>
           ${deliveryLine}
         </ul>

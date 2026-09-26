@@ -18,7 +18,7 @@ ESHA.faqs = function () {
   return [
     {
       q: 'How do I place an order?',
-      a: '<p>Add your products to the cart and tap <strong>Proceed to Checkout</strong>. Enter your name, mobile number and delivery address, then tap <strong>Place Order</strong>. No account or advance payment is needed.</p>'
+      a: '<p>Add your products to the cart and tap <strong>Proceed to Checkout</strong>. Enter your name, mobile number and delivery address, then tap <strong>Place Order</strong>. No account is needed. After placing the order you can send a small advance by JazzCash or bank transfer to confirm it on priority, but this is optional.</p>'
     },
     {
       q: 'Is Cash on Delivery available?',

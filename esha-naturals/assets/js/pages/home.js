@@ -45,7 +45,7 @@
       );
       stage.insertAdjacentHTML(
         'beforeend',
-        `<img class="stage__bottle${p.category === 'hair-care' ? ' stage__bottle--sm' : ''}" src="${U.asset(p.images.product)}" alt="" width="${p.images.width}" height="${p.images.height}" decoding="async" fetchpriority="low" data-slide-img>`
+        `<img class="stage__bottle${ui.isSmall(p) ? ' stage__bottle--sm' : ''}" src="${U.asset(p.images.product)}" alt="" width="${p.images.width}" height="${p.images.height}" decoding="async" fetchpriority="low" data-slide-img>`
       );
     });
 
@@ -150,6 +150,27 @@
     ctx.on(document, 'visibilitychange', () => setHold(document.hidden || hero.matches(':hover')));
     ctx.cleanup(() => clearTimeout(timer));
 
+    // The bottles lean gently toward the mouse pointer
+    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      let raf = 0;
+      hero.addEventListener('pointermove', (e) => {
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(() => {
+          const r = hero.getBoundingClientRect();
+          const x = (e.clientX - r.left) / r.width - 0.5;
+          const y = (e.clientY - r.top) / r.height - 0.5;
+          stage.style.setProperty('--ry', `${(x * 9).toFixed(2)}deg`);
+          stage.style.setProperty('--rx', `${(-y * 6).toFixed(2)}deg`);
+        });
+      });
+      hero.addEventListener('pointerleave', () => {
+        cancelAnimationFrame(raf);
+        stage.style.removeProperty('--rx');
+        stage.style.removeProperty('--ry');
+      });
+      ctx.cleanup(() => cancelAnimationFrame(raf));
+    }
+
     hero.addEventListener('keydown', (e) => {
       if (e.target.closest('input, textarea')) return;
       if (e.key === 'ArrowLeft') go(index - 1);
@@ -206,7 +227,7 @@
               .slice(0, 2)
               .map(
                 (p) =>
-                  `<img src="${U.asset(p.images.productSm)}" alt=""" width="${p.images.smWidth}" height="${p.images.smHeight}" loading="lazy" decoding="async">`
+                  `<img class="${ui.isSmall(p) ? 'is-small' : 'is-large'}" src="${U.asset(p.images.productSm)}" alt="" width="${p.images.smWidth}" height="${p.images.smHeight}" loading="lazy" decoding="async">`
               )
               .join('')}
           </div>
