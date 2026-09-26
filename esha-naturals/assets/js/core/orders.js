@@ -61,7 +61,7 @@
         notes: notes || '',
         items: lines.map((l) => ({
           id: l.product.id,
-          name: l.product.name,
+          name: l.product.bundle ? `${l.product.name}: ${l.product.tagline}` : l.product.name,
           size: l.product.size,
           price: l.product.price,
           comparePrice: l.product.comparePrice,
@@ -179,6 +179,31 @@
           'Transaction ID / sender number': reference || '-',
           'Order total': money(order.total),
           Note: 'Please check your account before confirming this advance.'
+        },
+        15000
+      );
+    },
+
+    // A customer review, emailed to the store for approval before it is shown on the website.
+    async sendReview(r) {
+      const cfg = E.config;
+      if (!isLive()) return { ok: true, demo: true };
+      if (!cfg.orderEmail) return { ok: false, message: 'No email configured' };
+      const p = E.utils.getProduct(r.product);
+      const stars = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
+      return postJSON(
+        `https://formsubmit.co/ajax/${encodeURIComponent(cfg.orderEmail)}`,
+        {
+          _subject: `New review (${r.rating}/5) for ${p ? p.name : r.product} from ${r.name}`,
+          _template: 'table',
+          _captcha: 'false',
+          Product: p ? `${p.name} (${p.size})` : r.product,
+          Rating: `${stars} (${r.rating} out of 5)`,
+          Name: r.name,
+          City: r.city || '-',
+          Review: r.text,
+          Date: r.date,
+          'To publish': `Add it to assets/js/data/reviews.js: { product: '${r.product}', name: ${JSON.stringify(r.name)}, city: ${JSON.stringify(r.city || '')}, rating: ${r.rating}, date: '${r.date}', text: ${JSON.stringify(r.text)} },`
         },
         15000
       );

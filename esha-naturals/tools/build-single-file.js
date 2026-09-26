@@ -46,12 +46,14 @@ const SCRIPTS = [
   'assets/js/data/products.js',
   'assets/js/data/articles.js',
   'assets/js/data/faqs.js',
+  'assets/js/data/reviews.js',
   'assets/js/core/utils.js',
   'assets/js/core/icons.js',
   'assets/js/core/cart.js',
   'assets/js/core/orders.js',
   'assets/js/core/nav.js',
   'assets/js/core/ui.js',
+  'assets/js/core/reviews.js',
   'assets/js/pages/home.js',
   'assets/js/pages/shop.js',
   'assets/js/pages/product.js',
@@ -68,6 +70,8 @@ const ALIASES = {
   'assets/images/posters/hair-care-oil.webp': 'assets/images/posters/hair-care-oil-sm.webp',
   'assets/images/posters/mustard-oil.webp': 'assets/images/posters/mustard-oil-sm.webp',
   'assets/images/posters/sesame-oil.webp': 'assets/images/posters/sesame-oil-sm.webp',
+  'assets/images/posters/hair-care-bundle.webp': 'assets/images/posters/hair-care-bundle-sm.webp',
+  'assets/images/posters/cooking-oil-bundle.webp': 'assets/images/posters/cooking-oil-bundle-sm.webp',
   'assets/images/brand/hero-group-sm.webp': 'assets/images/brand/hero-group.webp'
 };
 

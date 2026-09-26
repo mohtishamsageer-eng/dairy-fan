@@ -27,9 +27,11 @@
     }
   };
 
-  const getProduct = (id) => E.products.find((p) => p.id === id) || null;
+  // Single products and bundle offers together
+  const allProducts = () => E.products.concat(E.bundles || []);
+  const getProduct = (id) => allProducts().find((p) => p.id === id) || null;
   const getCategory = (id) => E.categories.find((c) => c.id === id) || null;
-  const productsIn = (categoryId) => E.products.filter((p) => !categoryId || p.category === categoryId);
+  const productsIn = (categoryId) => allProducts().filter((p) => !categoryId || p.category === categoryId);
 
   const productUrl = (p) => `product.html?id=${encodeURIComponent(p.id)}`;
   const categoryUrl = (c) => `shop.html?category=${encodeURIComponent(c.id)}`;
@@ -126,6 +128,7 @@
     param,
     asset,
     absUrl,
+    allProducts,
     getProduct,
     getCategory,
     productsIn,

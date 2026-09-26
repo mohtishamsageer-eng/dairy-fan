@@ -28,15 +28,17 @@
     const w = sm ? p.images.smWidth : p.images.width;
     const h = sm ? p.images.smHeight : p.images.height;
     const classes = `${cls} ${isSmall(p) ? 'is-small' : 'is-large'}`.trim();
-    return `<img class="${classes}" src="${U.asset(src)}" alt="${esc(p.name)}, ${esc(p.size)} bottle" width="${w}" height="${h}" loading="${eager ? 'eager' : 'lazy'}" decoding="async">`;
+    return `<img class="${classes}" src="${U.asset(src)}" alt="${esc(imgAlt(p))}" width="${w}" height="${h}" loading="${eager ? 'eager' : 'lazy'}" decoding="async">`;
   };
+  const imgAlt = (p) => (p.bundle ? `${p.name}: ${p.tagline}, ${p.size}` : `${p.name}, ${p.size} bottle`);
 
   const productCard = (p, { level = 3, delay = 0, eager = false } = {}) => {
     const cat = U.getCategory(p.category);
     const off = U.discountPercent(p);
-    return `<article class="p-card reveal" style="--tint:${p.theme.tint};--accent:${p.theme.accent};--d:${delay}s">
+    return `<article class="p-card${p.bundle ? ' p-card--bundle' : ''} reveal" style="--tint:${p.theme.tint};--accent:${p.theme.accent};--d:${delay}s">
       <div class="p-card__media">
         ${off ? `<span class="p-card__badge">−${off}%</span>` : ''}
+        ${p.bundle ? '<span class="p-card__bundle">Bundle</span>' : ''}
         <span class="p-card__size">${esc(p.size)}</span>
         ${productImg(p, { eager })}
       </div>
@@ -49,6 +51,30 @@
           <button type="button" class="btn btn--dark btn--block btn--sm" data-add="${p.id}" aria-label="Add ${esc(p.name)} to cart">
             ${icon('bag')}<span>Add to Cart</span>
           </button>
+        </div>
+      </div>
+    </article>`;
+  };
+
+  // Large bundle offer card: poster, what's inside, price and actions
+  const bundleCard = (p, { level = 3, delay = 0 } = {}) => {
+    const items = (p.includes || []).map(U.getProduct).filter(Boolean);
+    const saved = p.comparePrice > p.price ? p.comparePrice - p.price : 0;
+    return `<article class="b-card reveal" style="--tint:${p.theme.tint};--d:${delay}s">
+      <a class="b-card__media" href="${U.productUrl(p)}" tabindex="-1" aria-hidden="true">
+        <img src="${U.asset(p.images.posterSm)}" alt="" width="640" height="960" decoding="async">
+      </a>
+      <div class="b-card__body">
+        <p class="b-card__tag">${icon('box')}<span>Bundle pack${saved ? ` · Save ${money(saved)}` : ''}</span></p>
+        <h${level} class="b-card__title"><a href="${U.productUrl(p)}">${esc(p.name)}</a></h${level}>
+        <p class="b-card__desc">${esc(p.shortDescription)}</p>
+        <ul class="b-card__items">${items
+          .map((x) => `<li>${icon('check')}<a href="${U.productUrl(x)}">${esc(x.name)}</a><span>${esc(x.size)}</span></li>`)
+          .join('')}</ul>
+        ${priceHtml(p, { save: true })}
+        <div class="b-card__actions">
+          <button type="button" class="btn btn--dark" data-add="${p.id}" aria-label="Add ${esc(p.name)} to cart">${icon('bag')}<span>Add to Cart</span></button>
+          <a class="btn btn--outline" href="${U.productUrl(p)}">View details</a>
         </div>
       </div>
     </article>`;
@@ -627,7 +653,7 @@
     const p = U.getProduct(id);
     const target = $$('.cart-btn').find((b) => b.getBoundingClientRect().width > 0);
     if (!p || !target) return 0;
-    const scope = btn.closest('.p-card, .pdp__grid, .spotlight, .hero, .buybar') || document;
+    const scope = btn.closest('.p-card, .b-card, .pdp__grid, .spotlight, .hero, .buybar') || document;
     const img = scope.querySelector('img');
     const from = (img || btn).getBoundingClientRect();
     const to = target.getBoundingClientRect();
@@ -783,6 +809,8 @@
     productImg,
     isSmall,
     productCard,
+    bundleCard,
+    imgAlt,
     articleCard,
     ornament,
     accordionHtml,

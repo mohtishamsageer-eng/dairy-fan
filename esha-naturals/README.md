@@ -4,6 +4,9 @@ An online store for **Esha Naturals** hair care and cooking oils. Customers can 
 categories, add to cart and place **Cash on Delivery** orders from anywhere in Pakistan.
 
 - 4 products in 2 categories: **Hair Care** (Anti Hair Fall Oil, Hair Care Oil) and **Cooking Oils** (Mustard Oil, Sesame Oil)
+- 2 **Bundle Offers**: Hair Oil Bundle (Anti Hair Fall + Hair Care, Rs 3,400 → Rs 1,700) and
+  Cooking Oil Bundle (Mustard + Sesame, Rs 2,399 → Rs 1,700), on the home page, in the shop and with their own product pages
+- **Customer reviews** on the home page and every product page, with a "Write a review" form (see section 5)
 - Working cart, checkout with Pakistani mobile-number validation, order confirmation page
 - **Every order is emailed to `eshanaturals0@gmail.com`** with all the details the customer filled in
   (no WhatsApp order messages). Contact-form messages arrive by email too.
@@ -70,6 +73,7 @@ To preview on your computer, double-click `index.html` or `dist/esha-naturals.ht
 ## 4. Everyday changes
 
 - **Prices, descriptions, sizes:** `assets/js/data/products.js` (`price` = selling price, `comparePrice` = original price)
+- **Bundle offers:** `ESHA.bundles` at the bottom of `assets/js/data/products.js` (`includes` = the products inside)
 - **Categories:** top of `assets/js/data/products.js`
 - **Articles:** `assets/js/data/articles.js`
 - **FAQs:** `assets/js/data/faqs.js`
@@ -77,6 +81,17 @@ To preview on your computer, double-click `index.html` or `dist/esha-naturals.ht
 - **Colours and fonts:** the variables at the top of `assets/css/main.css`
 
 After changing anything, rebuild the single file with `node tools/build-single-file.js` (needs Node.js).
+
+## 5. Customer reviews
+
+Customers write a review (stars, name, city, text) on the home page or a product page. The review is
+**emailed to `orderEmail`** with the subject *"New review (5/5) for … from …"*; the customer sees their own
+review straight away, marked "awaiting approval" (only on their phone/computer).
+
+Reviews are **not published automatically**, so nobody can post spam or fake reviews on the store. To publish
+one, copy the ready-made line from the email's *"To publish"* row into `ESHA.customerReviews` in
+`assets/js/data/reviews.js` and upload the website again (and rebuild the single file). The average rating,
+star bars and review list update by themselves. Please only add real reviews from real customers.
 
 ## Folder structure
 
@@ -101,8 +116,8 @@ esha-naturals/
 │   │   └── brand/        Logo (SVG), home-page group photo, favicon, app icons, social sharing image
 │   └── js/
 │       ├── config.js     ← store settings
-│       ├── data/         products, articles, FAQs
-│       ├── core/         cart, orders (email), navigation, layout (header, footer, cart drawer), icons, helpers
+│       ├── data/         products & bundles, articles, FAQs, customer reviews
+│       ├── core/         cart, orders (email), reviews, navigation, layout (header, footer, cart drawer), icons, helpers
 │       └── pages/        code for each page
 ├── tools/build-single-file.js   Builds dist/esha-naturals.html
 └── google-apps-script/   Optional Google Sheet order log (Code.gs + SETUP.md)

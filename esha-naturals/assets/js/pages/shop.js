@@ -43,7 +43,7 @@
     };
 
     function renderPills() {
-      const all = [{ id: '', name: 'All Products', count: E.products.length }].concat(
+      const all = [{ id: '', name: 'All Products', count: U.allProducts().length }].concat(
         E.categories.map((c) => ({ id: c.id, name: c.name, count: U.productsIn(c.id).length }))
       );
       pills.innerHTML = all

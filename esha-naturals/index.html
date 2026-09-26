@@ -24,11 +24,14 @@
   <script src="assets/js/data/products.js" defer></script>
   <script src="assets/js/data/articles.js" defer></script>
   <script src="assets/js/data/faqs.js" defer></script>
+  <script src="assets/js/data/reviews.js" defer></script>
   <script src="assets/js/core/utils.js" defer></script>
   <script src="assets/js/core/icons.js" defer></script>
   <script src="assets/js/core/cart.js" defer></script>
+  <script src="assets/js/core/orders.js" defer></script>
   <script src="assets/js/core/nav.js" defer></script>
   <script src="assets/js/core/ui.js" defer></script>
+  <script src="assets/js/core/reviews.js" defer></script>
   <script src="assets/js/pages/home.js" defer></script>
 </head>
 <body data-page="home">
@@ -101,6 +104,19 @@
       </div>
     </section>
 
+    <!-- Bundle offers (rendered from data/products.js) -->
+    <section class="section bundles" id="bundles" aria-labelledby="bundles-title">
+      <div class="container">
+        <header class="section-head section-head--split reveal">
+          <p class="eyebrow">Bundle Offers</p>
+          <h2 class="section-title" id="bundles-title">Better <em>together</em></h2>
+          <p class="section-sub">Two bottles, one special price. Save more when you buy our favourite pairs together.</p>
+          <a class="link-arrow section-head__action" href="shop.html?category=bundles">View bundle offers <span data-icon="arrowRight"></span></a>
+        </header>
+        <div class="bundle-grid" data-bundles></div>
+      </div>
+    </section>
+
     <!-- Story -->
     <section class="section" id="story" aria-labelledby="story-title">
       <div class="container story">
@@ -127,6 +143,9 @@
 
     <!-- Product spotlight (rendered from product data) -->
     <section class="section section--dark grain spotlight" id="spotlight" data-spotlight="anti-hair-fall-oil" aria-label="Product spotlight"></section>
+
+    <!-- Customer reviews (data/reviews.js + write-a-review form, core/reviews.js) -->
+    <section class="section section--cream" id="reviews" data-reviews></section>
 
     <!-- Why us -->
     <section class="section" aria-labelledby="why-title">

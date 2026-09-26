@@ -198,6 +198,7 @@
     const el = $('[data-categories]');
     if (!el) return;
     el.innerHTML = E.categories
+      .filter((c) => !c.bundle)
       .map((c, i) => {
         const ps = U.productsIn(c.id);
         return `<a class="cat-card cat-card--${c.id === 'hair-care' ? 'hair' : 'cook'} reveal" href="${U.categoryUrl(c)}" style="--glow:${c.glow};--d:${i * 0.1}s">
@@ -225,6 +226,15 @@
   function renderProducts() {
     const el = $('[data-products]');
     if (el) el.innerHTML = E.products.map((p, i) => ui.productCard(p, { delay: i * 0.08 })).join('');
+  }
+
+  /* ---------------- Bundle offers ---------------- */
+  function renderBundles() {
+    const el = $('[data-bundles]');
+    if (!el) return;
+    const list = E.bundles || [];
+    el.closest('section').hidden = !list.length;
+    el.innerHTML = list.map((p, i) => ui.bundleCard(p, { delay: i * 0.1 })).join('');
   }
 
   /* ---------------- Spotlight ---------------- */
@@ -283,8 +293,13 @@
     renderMarquee();
     renderCategories();
     renderProducts();
+    renderBundles();
     renderSpotlight();
     renderArticles();
     renderFaq();
+    if (E.reviews)
+      E.reviews.mount($('[data-reviews]'), ctx, {
+        sub: 'Real words from real customers. Tried our oils? Tell us how they worked for you.'
+      });
   };
 })(window.ESHA);

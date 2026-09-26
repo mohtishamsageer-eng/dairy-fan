@@ -230,3 +230,122 @@ ESHA.products = [
     theme: { accent: '#a57cc0', tint: '#ece2ea', glow: 'rgba(165, 124, 192, 0.36)' }
   }
 ];
+
+/*
+ * Bundle offers: two bottles together at one special price.
+ * `includes` lists the products inside the bundle (their ids from the list above).
+ */
+ESHA.categories.push({
+  id: 'bundles',
+  bundle: true,
+  name: 'Bundle Offers',
+  title: 'Bundle Offers',
+  tagline: 'Two bottles, one special price',
+  description:
+    'Our favourite pairs packed together at a special bundle price: complete hair care, or both pure cooking oils for your kitchen.',
+  icon: 'box',
+  glow: 'rgba(201, 164, 92, 0.4)'
+});
+
+ESHA.bundles = [
+  {
+    id: 'hair-care-bundle',
+    bundle: true,
+    includes: ['anti-hair-fall-oil', 'hair-care-oil'],
+    name: 'Hair Oil Bundle',
+    category: 'bundles',
+    size: '2 × 250 ml',
+    price: 1700,
+    comparePrice: 3400,
+    tagline: 'Anti Hair Fall Oil + Hair Care Oil',
+    motto: 'Complete hair care, one special price.',
+    shortDescription: 'Both of our hair oils together: Anti Hair Fall Oil and Hair Care Oil, for stronger, healthier and thicker hair.',
+    description:
+      'The complete Esha Naturals hair care routine in one pack. Anti Hair Fall Oil with castor, amla and ritha helps reduce hair fall and strengthen hair from the roots, while Hair Care Oil with coconut, castor, amla, hibiscus, rose leaves and almond nourishes the scalp and adds softness and shine. Two 250 ml bottles at a special bundle price.',
+    highlights: [
+      { icon: 'hair', title: 'Reduces hair fall', text: 'Anti Hair Fall Oil strengthens the roots' },
+      { icon: 'drop', title: 'Nourishes scalp', text: 'Hair Care Oil soothes and moisturises' },
+      { icon: 'strength', title: 'Stronger, thicker hair', text: 'Use both for complete hair care' },
+      { icon: 'sparkle', title: 'Special bundle price', text: 'Two bottles for one low price' }
+    ],
+    ingredientsTitle: "What's in the bundle",
+    ingredients: [
+      { name: 'Anti Hair Fall Oil, 250 ml', note: 'Castor oil, amla and ritha to reduce hair fall and strengthen roots' },
+      { name: 'Hair Care Oil, 250 ml', note: 'Coconut, castor, amla, hibiscus, rose leaves and almond oil for shine and softness' }
+    ],
+    howToUse: [
+      'Use Anti Hair Fall Oil on the scalp 2–3 times a week: massage for 5–10 minutes and leave it on for 1–2 hours or overnight.',
+      'On the other days, use Hair Care Oil on the scalp and lengths to nourish dry, dull hair.',
+      'Wash with a mild shampoo after oiling.',
+      'For external use only. Do a small patch test before first use.'
+    ],
+    details: [
+      ['Includes', 'Anti Hair Fall Oil 250 ml + Hair Care Oil 250 ml'],
+      ['Pack size', '2 × 250 ml pump bottles'],
+      ['Best for', 'Hair fall, dryness and dull, weak-looking hair'],
+      ['Promise', '100% original · Pure · Natural · Trusted']
+    ],
+    caution: 'For external use only. Avoid contact with eyes. Do a small patch test before first use.',
+    images: {
+      product: 'assets/images/products/hair-care-bundle.webp',
+      productSm: 'assets/images/products/hair-care-bundle-sm.webp',
+      poster: 'assets/images/posters/hair-care-bundle.webp',
+      posterSm: 'assets/images/posters/hair-care-bundle-sm.webp',
+      width: 604,
+      height: 1100,
+      smWidth: 308,
+      smHeight: 560
+    },
+    theme: { accent: '#c9a45c', tint: '#ece6cf', glow: 'rgba(169, 178, 95, 0.36)' }
+  },
+  {
+    id: 'cooking-oil-bundle',
+    bundle: true,
+    includes: ['mustard-oil', 'sesame-oil'],
+    name: 'Cooking Oil Bundle',
+    category: 'bundles',
+    size: '2 × 1 Litre',
+    price: 1700,
+    comparePrice: 2399,
+    tagline: 'Mustard Cooking Oil + Sesame Cooking Oil',
+    motto: 'Pure cooking oils, one special price.',
+    shortDescription: 'Both of our pure cooking oils together: Mustard Oil and Sesame Oil, 1 litre each.',
+    description:
+      'Everything your kitchen needs in one pack. Pure Mustard Cooking Oil brings the bold, authentic desi taste to curries, tadka and achar, and pure Sesame Oil adds a gentle, nutty aroma to everyday cooking and traditional recipes. Two 1 litre bottles at a special bundle price.',
+    highlights: [
+      { icon: 'drop', title: '100% pure oils', text: 'Mustard and sesame, nothing else added' },
+      { icon: 'steam', title: 'Rich aroma & taste', text: 'Authentic flavour for every dish' },
+      { icon: 'heart', title: 'Good for health', text: 'Rich in natural, healthy fats' },
+      { icon: 'sparkle', title: 'Special bundle price', text: 'Two litres for one low price' }
+    ],
+    ingredientsTitle: "What's in the bundle",
+    ingredients: [
+      { name: 'Mustard Cooking Oil, 1 Litre', note: 'Bold, authentic desi flavour for curries, frying, tadka and achar' },
+      { name: 'Sesame Cooking Oil, 1 Litre', note: 'Gentle, nutty aroma for everyday cooking and traditional recipes' }
+    ],
+    howToUse: [
+      'Use Mustard Oil for curries, frying, tadka and pickles (achar).',
+      'Use Sesame Oil for everyday cooking, stir-fries, or drizzle it over finished dishes.',
+      'Store both bottles in a cool, dry place away from direct sunlight.',
+      'Close the caps tightly after every use.'
+    ],
+    details: [
+      ['Includes', 'Mustard Cooking Oil 1 L + Sesame Cooking Oil 1 L'],
+      ['Pack size', '2 × 1 Litre bottles'],
+      ['Best for', 'Everyday cooking, curries, tadka and traditional recipes'],
+      ['Promise', '100% original · Pure · Natural · Trusted']
+    ],
+    caution: 'Store in a cool, dry place. Keep away from direct sunlight.',
+    images: {
+      product: 'assets/images/products/cooking-oil-bundle.webp',
+      productSm: 'assets/images/products/cooking-oil-bundle-sm.webp',
+      poster: 'assets/images/posters/cooking-oil-bundle.webp',
+      posterSm: 'assets/images/posters/cooking-oil-bundle-sm.webp',
+      width: 663,
+      height: 1100,
+      smWidth: 338,
+      smHeight: 560
+    },
+    theme: { accent: '#e0a53a', tint: '#f1e3c2', glow: 'rgba(224, 165, 58, 0.42)' }
+  }
+];

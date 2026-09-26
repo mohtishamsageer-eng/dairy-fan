@@ -37,6 +37,7 @@
     mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.6 6.6 8.4 6.4 8.4-6.4"/>',
     pin: '<path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/>',
     clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/>',
+    star: '<path d="m12 3.2 2.6 5.5 6 .8-4.4 4.2 1.1 6-5.3-2.9-5.3 2.9 1.1-6-4.4-4.2 6-.8Z" fill="currentColor" stroke="currentColor" stroke-linejoin="round"/>',
     copy: '<rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M15.5 8.5v-3a2 2 0 0 0-2-2h-8a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h3"/>',
     wallet: '<path d="M3.5 7.5v10a2 2 0 0 0 2 2h14v-12h-14a2 2 0 0 1-2-2 2 2 0 0 1 2-2h12v4"/><path d="M16.5 13.5h.01"/>',
     box: '<path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5v-9Z"/><path d="m3 7.5 9 4.5 9-4.5M12 12v9"/>',

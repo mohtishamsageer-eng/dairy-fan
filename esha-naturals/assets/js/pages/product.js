@@ -52,6 +52,15 @@
       description: p.description,
       sku: p.id,
       brand: { '@type': 'Brand', name: cfg.brand },
+      ...(E.reviews && E.reviews.aggregate(p.id).count
+        ? {
+            aggregateRating: {
+              '@type': 'AggregateRating',
+              ratingValue: E.reviews.aggregate(p.id).avg.toFixed(1),
+              reviewCount: E.reviews.aggregate(p.id).count
+            }
+          }
+        : {}),
       offers: {
         '@type': 'Offer',
         url: window.location.href,
@@ -85,12 +94,12 @@
       <div class="gallery">
         <div class="gallery__stage">
           ${off ? `<span class="price__save gallery__badge">Save ${off}%</span>` : ''}
-          <img class="gallery__img gallery__img--product is-active" data-view="0" src="${U.asset(p.images.product)}" alt="${esc(p.name)}, ${esc(p.size)} bottle" width="${p.images.width}" height="${p.images.height}" fetchpriority="high">
+          <img class="gallery__img gallery__img--product is-active" data-view="0" src="${U.asset(p.images.product)}" alt="${esc(ui.imgAlt(p))}" width="${p.images.width}" height="${p.images.height}" fetchpriority="high">
           <img class="gallery__img gallery__img--poster" data-view="1" src="${U.asset(p.images.poster)}" alt="${esc(p.name)} poster with benefits and ingredients" width="1024" height="1536" loading="lazy" decoding="async">
           <button type="button" class="gallery__zoom" data-zoom>${icon('expand')}<span>View poster</span></button>
         </div>
         <div class="gallery__thumbs" role="group" aria-label="Product images">
-          <button type="button" class="gallery__thumb" data-thumb="0" aria-pressed="true" aria-label="Show bottle photo">
+          <button type="button" class="gallery__thumb" data-thumb="0" aria-pressed="true" aria-label="Show ${p.bundle ? 'bundle' : 'bottle'} photo">
             <img class="is-product" src="${U.asset(p.images.productSm)}" alt="" width="${p.images.smWidth}" height="${p.images.smHeight}">
           </button>
           <button type="button" class="gallery__thumb" data-thumb="1" aria-pressed="false" aria-label="Show poster">
@@ -107,7 +116,7 @@
         </div>
         <div class="pdp__price">
           ${ui.priceHtml(p, { save: true })}
-          ${off ? `<p class="pdp__price-note">${icon('sparkle')} You save ${money(p.comparePrice - p.price)} on this bottle</p>` : ''}
+          ${off ? `<p class="pdp__price-note">${icon('sparkle')} You save ${money(p.comparePrice - p.price)} on this ${p.bundle ? 'bundle' : 'bottle'}</p>` : ''}
         </div>
         <p class="pdp__desc">${esc(p.description)}</p>
         <ul class="pdp__highlights">
@@ -215,10 +224,21 @@
     </div>
   </div>`;
 
+    /* ---------- Reviews ---------- */
+    const revEl = $('[data-pdp-reviews]');
+    if (revEl && E.reviews) {
+      revEl.hidden = false;
+      E.reviews.mount(revEl, ctx, { productId: p.id, heading: `Reviews for <em>${esc(p.name)}</em>` });
+    }
+
     /* ---------- Related products ---------- */
-    const related = E.products
+    // Bundles show what's inside first; single products show the bundle they belong to first
+    const rank = (x) => ((p.includes || []).includes(x.id) || (x.includes || []).includes(p.id) ? 2 : x.category === p.category ? 1 : 0);
+    const related = U.allProducts()
       .filter((x) => x.id !== p.id)
-      .sort((a, b) => (b.category === p.category) - (a.category === p.category))
+      .map((x, i) => ({ x, i }))
+      .sort((a, b) => rank(b.x) - rank(a.x) || a.i - b.i)
+      .map((o) => o.x)
       .slice(0, 3);
     const rel = $('[data-pdp-related]');
     if (related.length) {
