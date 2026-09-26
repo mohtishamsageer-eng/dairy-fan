@@ -58,8 +58,7 @@ ESHA.articles = [
     slug: 'hair-oiling-ritual',
     topic: 'hair-care',
     title: 'The Right Way to Oil Your Hair: A 5-Step Ritual',
-    excerpt:
-      'Oiling works best when it is done right. Follow this simple five-step ritual for a nourished scalp and softer, shinier hair.',
+    excerpt: 'Oiling works best when it is done right. Follow this simple five-step ritual for a nourished scalp and softer, shinier hair.',
     cover: 'assets/images/journal/hair-oiling-ritual.webp',
     coverAlt: 'A bowl of fresh amla next to Esha Naturals Hair Care Oil',
     products: ['hair-care-oil'],
@@ -179,8 +178,7 @@ ESHA.articles = [
     slug: 'sesame-oil-benefits',
     topic: 'kitchen',
     title: 'Sesame Oil: Benefits & Best Uses in Everyday Cooking',
-    excerpt:
-      'Til ka tel brings a gentle nutty aroma and natural antioxidants to your cooking. Here is how to make the most of it.',
+    excerpt: 'Til ka tel brings a gentle nutty aroma and natural antioxidants to your cooking. Here is how to make the most of it.',
     cover: 'assets/images/journal/sesame-oil-benefits.webp',
     coverAlt: 'A wooden bowl of sesame seeds beside Esha Naturals Sesame Oil',
     products: ['sesame-oil'],

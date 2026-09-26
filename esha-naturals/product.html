@@ -25,6 +25,7 @@
   <script src="assets/js/core/utils.js" defer></script>
   <script src="assets/js/core/icons.js" defer></script>
   <script src="assets/js/core/cart.js" defer></script>
+  <script src="assets/js/core/nav.js" defer></script>
   <script src="assets/js/core/ui.js" defer></script>
   <script src="assets/js/pages/product.js" defer></script>
 </head>
@@ -37,14 +38,14 @@
     <div class="pdp" data-pdp></div>
     <section class="section section--dark grain" data-pdp-details hidden></section>
     <section class="section section--cream" data-pdp-related hidden></section>
+
+    <aside class="buybar" data-buybar aria-label="Quick add to cart" hidden></aside>
+
+    <dialog class="lightbox" data-lightbox aria-label="Product poster">
+      <img alt="" data-lightbox-img>
+      <button type="button" class="icon-btn lightbox__close" data-lightbox-close aria-label="Close"><span data-icon="close"></span></button>
+    </dialog>
   </main>
-
-  <aside class="buybar" data-buybar aria-label="Quick add to cart" hidden></aside>
-
-  <dialog class="lightbox" data-lightbox aria-label="Product poster">
-    <img src="" alt="" data-lightbox-img>
-    <button type="button" class="icon-btn lightbox__close" data-lightbox-close aria-label="Close"><span data-icon="close"></span></button>
-  </dialog>
 
   <footer id="site-footer" class="site-footer"></footer>
   <noscript><p style="padding:1rem;text-align:center;background:#1a120b;color:#f3e8d6">Please enable JavaScript to shop on this website.</p></noscript>

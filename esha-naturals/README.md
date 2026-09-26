@@ -5,31 +5,38 @@ categories, add to cart and place **Cash on Delivery** orders from anywhere in P
 
 - 4 products in 2 categories: **Hair Care** (Anti Hair Fall Oil, Hair Care Oil) and **Cooking Oils** (Mustard Oil, Sesame Oil)
 - Working cart, checkout with Pakistani mobile-number validation, order confirmation page
-- Orders reach you on **WhatsApp**, and optionally in a **Google Sheet** (with email alerts)
+- **Every order is emailed to `eshanaturals0@gmail.com`** with all the details the customer filled in
+  (no WhatsApp order messages). Contact-form messages arrive by email too.
+- WhatsApp **0317 7161578** is used only for the "Chat with us" buttons
 - 6 short **Journal** articles on the benefits of the oils
 - About, Contact, FAQ, Shipping / Returns / Privacy pages
-- Works on mobile and desktop, fast, no monthly fees: it is a plain static website (HTML, CSS, JavaScript)
+- Works on mobile and desktop, fast, no monthly fees: a plain static website (HTML, CSS, JavaScript)
+- Also available as **one single file**: [`dist/esha-naturals.html`](dist/esha-naturals.html)
 
-## 1. Before going live: fill in your details
+## 1. How orders reach you (email)
 
-Open **`assets/js/config.js`** and fill in:
+When a customer taps **Place Order**, the website sends an email to `orderEmail`
+(set in `assets/js/config.js`) through the free service [FormSubmit](https://formsubmit.co).
+The email subject looks like *"New order received EN-260926-AB12: Rs 2,198 (Ayesha Khan, Lahore)"* and
+contains a table with the order number, name, mobile number, city, full address, landmark,
+items, subtotal, delivery charge, total, payment method and notes. If the customer typed an
+email address, you can simply press **Reply** to answer them.
 
-| Setting | What to put |
-|---|---|
-| `whatsappNumber` | Number that receives orders, e.g. `0300 1234567` → `'923001234567'` |
-| `phone` | Number shown on the website, e.g. `'0300 1234567'` |
-| `email` | Your email (optional) |
-| `location` | e.g. `'Lahore, Pakistan'` |
-| `delivery.fee` / `delivery.freeAbove` | Delivery charge and free-delivery amount (now Rs 200, free over Rs 2,000) |
-| `social` | Instagram / Facebook / TikTok / YouTube links (optional) |
-| `orderEndpoint` | Optional Google Sheet link, see below |
+**One-time activation (important):**
 
-**How orders reach you**
+1. Put the website online (see step 2).
+2. Place one test order yourself on the live website.
+3. FormSubmit sends an **"Activate Form"** email to `eshanaturals0@gmail.com`. Open it and click **Activate**
+   (check the Spam folder if you don't see it).
+4. Place another test order: it arrives in the inbox. From now on every order arrives automatically.
 
-- **WhatsApp only** (just set `whatsappNumber`): when a customer taps *Place Order*, WhatsApp opens
-  with the full order (items, total, name, phone, address). The customer taps *Send* and you receive it.
-- **Google Sheet** (recommended as well): follow [`google-apps-script/SETUP.md`](google-apps-script/SETUP.md)
-  (about 5 minutes). Every order is then saved automatically in your sheet, and you can get an email per order.
+If you later move the website to a new address (for example your own domain), repeat the activation once.
+
+> When the website is opened as a file on a computer or phone (not from a web address), it runs as a
+> **demo**: everything works, but no email is sent, and the confirmation page says so.
+
+Optional: to also keep a spreadsheet of all orders, follow
+[`google-apps-script/SETUP.md`](google-apps-script/SETUP.md) and paste the link into `orderEndpoint`.
 
 ## 2. Put the website online
 
@@ -40,11 +47,23 @@ Pick one:
 - **Netlify / Vercel / Cloudflare Pages from GitHub:** import this repository and set the
   *base / root directory* to `esha-naturals`. No build command is needed.
 - **Any hosting with cPanel:** upload everything inside `esha-naturals` to `public_html`.
+- **Single file:** `dist/esha-naturals.html` can also be uploaded on its own (rename it to `index.html`).
 
-To preview on your computer, double-click `index.html`, or run `python3 -m http.server` inside the
-folder and open <http://localhost:8000>.
+To preview on your computer, double-click `index.html` or `dist/esha-naturals.html`.
 
-## 3. Everyday changes
+## 3. Settings — `assets/js/config.js`
+
+| Setting | Now | What it does |
+|---|---|---|
+| `orderEmail` | `eshanaturals0@gmail.com` | Where orders and contact messages are emailed |
+| `whatsappNumber` | `923177161578` | WhatsApp "Chat with us" buttons (not used for orders) |
+| `phone` | `0317 7161578` | Number shown on the website |
+| `email` | `eshanaturals0@gmail.com` | Email shown on the website |
+| `delivery.fee` / `delivery.freeAbove` | Rs 200, free over Rs 2,000 | Delivery charges |
+| `social` | empty | Instagram / Facebook / TikTok / YouTube links |
+| `orderEndpoint` | empty | Optional Google Sheet order log |
+
+## 4. Everyday changes
 
 - **Prices, descriptions, sizes:** `assets/js/data/products.js` (`price` = selling price, `comparePrice` = original price)
 - **Categories:** top of `assets/js/data/products.js`
@@ -52,6 +71,8 @@ folder and open <http://localhost:8000>.
 - **FAQs:** `assets/js/data/faqs.js`
 - **Shipping / returns / privacy text:** `policies.html`
 - **Colours and fonts:** the variables at the top of `assets/css/main.css`
+
+After changing anything, rebuild the single file with `node tools/build-single-file.js` (needs Node.js).
 
 ## Folder structure
 
@@ -65,6 +86,7 @@ esha-naturals/
 ├── journal.html          Articles list (?topic=…)
 ├── article.html          Single article (?slug=…)
 ├── about.html · contact.html · policies.html · 404.html
+├── dist/esha-naturals.html   The whole website in one file (generated)
 ├── assets/
 │   ├── css/main.css
 │   ├── fonts/            Self-hosted fonts (Cormorant Garamond, Jost, Great Vibes, OFL licence)
@@ -72,14 +94,15 @@ esha-naturals/
 │   │   ├── products/     Bottle photos with transparent background
 │   │   ├── posters/      Original product posters
 │   │   ├── journal/      Article covers
-│   │   └── brand/        Logo (SVG), favicon, app icons, social sharing image
+│   │   └── brand/        Logo (SVG), home-page group photo, favicon, app icons, social sharing image
 │   └── js/
 │       ├── config.js     ← store settings
 │       ├── data/         products, articles, FAQs
-│       ├── core/         cart, orders, layout (header, footer, cart drawer), icons, helpers
+│       ├── core/         cart, orders (email), navigation, layout (header, footer, cart drawer), icons, helpers
 │       └── pages/        code for each page
+├── tools/build-single-file.js   Builds dist/esha-naturals.html
 └── google-apps-script/   Optional Google Sheet order log (Code.gs + SETUP.md)
 ```
 
 The cart and the customer's last delivery details are stored in the customer's own browser
-(localStorage). No customer data is stored on the website itself.
+(localStorage). No customer data is stored on the website itself; orders are only emailed to you.

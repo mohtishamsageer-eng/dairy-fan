@@ -1,9 +1,10 @@
-/* Esha Naturals — order creation, local order history, WhatsApp message and Google Sheet sync */
+/* Esha Naturals — order creation, local order history and email delivery (FormSubmit) */
 (function (E) {
   'use strict';
 
-  const { store, money, whatsappUrl } = E.utils;
+  const { store, money } = E.utils;
   const KEY = 'esha_orders_v1';
+  const memory = {}; // keeps orders when the browser blocks storage (private mode, previews)
 
   const newOrderId = () => {
     const d = new Date();
@@ -15,7 +16,39 @@
     return `EN-${ymd}-${rand}`;
   };
 
+  // Emails can only be sent from the published website (http/https), not from a file opened
+  // on a computer or an embedded preview. There the site runs as a demo.
+  const isLive = () => /^https?:$/.test(window.location.protocol) && window.origin !== 'null';
+
+  const itemsText = (order, sep) => order.items.map((i, n) => `${n + 1}. ${i.name} (${i.size}) × ${i.qty} = ${money(i.total)}`).join(sep);
+
+  const postJSON = async (url, data, timeoutMs) => {
+    const controller = 'AbortController' in window ? new AbortController() : null;
+    const timer = controller ? setTimeout(() => controller.abort(), timeoutMs) : null;
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(data),
+        signal: controller ? controller.signal : undefined
+      });
+      let body = {};
+      try {
+        body = await res.json();
+      } catch (e) {
+        body = {};
+      }
+      return { ok: res.ok && String(body.success) === 'true', message: body.message || '' };
+    } catch (e) {
+      return { ok: false, message: e && e.name === 'AbortError' ? 'timeout' : 'network' };
+    } finally {
+      if (timer) clearTimeout(timer);
+    }
+  };
+
   const orders = {
+    isLive,
+
     create(customer, notes) {
       const lines = E.cart.lines();
       const subtotal = E.cart.subtotal();
@@ -43,68 +76,100 @@
     },
 
     save(order) {
+      memory[order.id] = order;
       const list = store.get(KEY, []);
       const next = [order].concat(Array.isArray(list) ? list.filter((o) => o && o.id !== order.id) : []).slice(0, 20);
       store.set(KEY, next);
     },
 
     find(id) {
+      if (memory[id]) return memory[id];
       const list = store.get(KEY, []);
       return (Array.isArray(list) ? list : []).find((o) => o && o.id === id) || null;
     },
 
-    whatsappText(order) {
+    last() {
+      const list = store.get(KEY, []);
+      return (Array.isArray(list) && list[0]) || Object.values(memory).pop() || null;
+    },
+
+    // The email the store receives for every order (one row per field in a neat table).
+    emailFields(order) {
       const c = order.customer;
-      const lines = [
-        `*New Order: ${E.config.brand}*`,
-        `Order ID: ${order.id}`,
-        '',
-        '*Items*'
-      ];
-      order.items.forEach((i, n) => lines.push(`${n + 1}. ${i.name} (${i.size}) × ${i.qty} = ${money(i.total)}`));
-      lines.push(
-        '',
-        `Subtotal: ${money(order.subtotal)}`,
-        `Delivery: ${order.delivery ? money(order.delivery) : 'Free'}`,
-        `*Total: ${money(order.total)}*`,
-        `Payment: ${order.payment}`,
-        '',
-        '*Delivery details*',
-        `Name: ${c.name}`,
-        `Phone: ${c.phone}`
+      const when = new Date(order.createdAt).toLocaleString('en-GB', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      });
+      const fields = {
+        _subject: `New order received ${order.id}: ${money(order.total)} (${c.name}, ${c.city})`,
+        _template: 'table',
+        _captcha: 'false',
+        'Order ID': order.id,
+        'Order date': when,
+        'Customer name': c.name,
+        'Mobile number': c.phone,
+        City: c.city,
+        'Full address': c.address,
+        'Nearest landmark': c.landmark || '-',
+        'Items ordered': itemsText(order, ' | '),
+        Subtotal: money(order.subtotal),
+        'Delivery charges': order.delivery ? money(order.delivery) : 'Free',
+        'TOTAL (Cash on Delivery)': money(order.total),
+        Payment: order.payment,
+        'Order notes': order.notes || '-',
+        Website: window.location.origin + window.location.pathname
+      };
+      if (c.email) {
+        fields.email = c.email; // lets the store press "Reply" to answer the customer
+        fields._autoresponse = `Thank you for your order ${order.id} with ${E.config.brand}! Total: ${money(order.total)} (Cash on Delivery). Our team will call you shortly to confirm it. Delivery takes ${E.config.delivery.timeText}.`;
+      }
+      return fields;
+    },
+
+    // Sends the order to the store. Resolves to { ok, demo, message }. Never throws.
+    async send(order) {
+      const cfg = E.config;
+      if (!isLive()) return { ok: true, demo: true };
+      if (cfg.orderEndpoint) orders.syncSheet(order);
+      if (!cfg.orderEmail) return { ok: !!cfg.orderEndpoint, message: 'No order email configured' };
+      return postJSON(`https://formsubmit.co/ajax/${encodeURIComponent(cfg.orderEmail)}`, orders.emailFields(order), 15000);
+    },
+
+    // Contact-form messages go to the same inbox.
+    async sendMessage({ name, phone, message }) {
+      const cfg = E.config;
+      if (!isLive()) return { ok: true, demo: true };
+      if (!cfg.orderEmail) return { ok: false, message: 'No email configured' };
+      return postJSON(
+        `https://formsubmit.co/ajax/${encodeURIComponent(cfg.orderEmail)}`,
+        {
+          _subject: `Website message from ${name}`,
+          _template: 'table',
+          _captcha: 'false',
+          Name: name,
+          'Mobile number': phone || '-',
+          Message: message,
+          Website: window.location.origin + window.location.pathname
+        },
+        15000
       );
-      if (c.email) lines.push(`Email: ${c.email}`);
-      lines.push(`City: ${c.city}`, `Address: ${c.address}`);
-      if (c.landmark) lines.push(`Landmark: ${c.landmark}`);
-      if (order.notes) lines.push(`Notes: ${order.notes}`);
-      lines.push('', 'Please confirm my order. Thank you!');
-      return lines.join('\n');
     },
 
-    whatsappUrl(order) {
-      return whatsappUrl(orders.whatsappText(order));
-    },
-
-    // Sends the order to the Google Apps Script web app (if configured).
-    // Resolves to true when the request left the browser, false otherwise. Never throws.
-    async sync(order) {
-      const url = E.config.orderEndpoint;
-      if (!url) return false;
-      const controller = 'AbortController' in window ? new AbortController() : null;
-      const timer = controller ? setTimeout(() => controller.abort(), 10000) : null;
+    // Optional Google Sheet log (see google-apps-script/SETUP.md). Fire-and-forget.
+    syncSheet(order) {
       try {
-        await fetch(url, {
+        fetch(E.config.orderEndpoint, {
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(order),
-          signal: controller ? controller.signal : undefined
-        });
-        return true;
+          body: JSON.stringify(order)
+        }).catch(() => {});
       } catch (e) {
-        return false;
-      } finally {
-        if (timer) clearTimeout(timer);
+        /* ignore */
       }
     }
   };

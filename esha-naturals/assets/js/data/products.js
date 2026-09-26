@@ -23,8 +23,7 @@ ESHA.categories = [
     name: 'Cooking Oils',
     title: 'Pure Cooking Oils',
     tagline: 'Pure nutrition, pure goodness',
-    description:
-      'Pure mustard and sesame oils with a rich aroma and authentic taste, for everyday cooking and traditional recipes.',
+    description: 'Pure mustard and sesame oils with a rich aroma and authentic taste, for everyday cooking and traditional recipes.',
     icon: 'pot',
     glow: 'rgba(224, 165, 58, 0.4)'
   }

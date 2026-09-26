@@ -6,7 +6,7 @@
   const { $, $$, esc, money } = U;
   const icon = E.icon;
   const cfg = E.config;
-  const page = document.body.dataset.page || '';
+  const currentPage = () => document.body.dataset.page || '';
 
   /* ------------------------------------------------------------------
    * Reusable components
@@ -25,7 +25,7 @@
     const src = sm ? p.images.productSm : p.images.product;
     const w = sm ? p.images.smWidth : p.images.width;
     const h = sm ? p.images.smHeight : p.images.height;
-    return `<img class="${cls}" src="${src}" alt="${esc(p.name)}, ${esc(p.size)} bottle" width="${w}" height="${h}" loading="${eager ? 'eager' : 'lazy'}" decoding="async">`;
+    return `<img class="${cls}" src="${U.asset(src)}" alt=""${esc(p.name)}, ${esc(p.size)} bottle" width="${w}" height="${h}" loading="${eager ? 'eager' : 'lazy'}" decoding="async">`;
   };
 
   const productCard = (p, { level = 3, delay = 0, eager = false } = {}) => {
@@ -54,7 +54,7 @@
   const articleCard = (a, { level = 3, delay = 0, featured = false } = {}) => {
     const topic = (E.topics || []).find((t) => t.id === a.topic);
     return `<article class="a-card${featured ? ' a-card--featured' : ''} reveal" style="--d:${delay}s">
-      <div class="a-card__media"><img src="${a.cover}" alt="${esc(a.coverAlt)}" width="720" height="480" loading="lazy" decoding="async"></div>
+      <div class="a-card__media"><img src="${U.asset(a.cover)}" alt=""${esc(a.coverAlt)}" width="720" height="480" loading="lazy" decoding="async"></div>
       <div class="a-card__body">
         <p class="a-card__meta"><span>${esc(topic ? topic.name : '')}</span><span aria-hidden="true">·</span><span>${U.readingTime(a.body)} min read</span></p>
         <h${level} class="a-card__title"><a href="${U.articleUrl(a)}">${esc(a.title)}</a></h${level}>
@@ -64,8 +64,7 @@
     </article>`;
   };
 
-  const ornament = (cls = '') =>
-    `<div class="ornament ${cls}" aria-hidden="true"><span></span>${icon('dropSolid')}<span></span></div>`;
+  const ornament = (cls = '') => `<div class="ornament ${cls}" aria-hidden="true"><span></span>${icon('dropSolid')}<span></span></div>`;
 
   // Accordion list (FAQ answers are trusted HTML written in data/faqs.js)
   const accordionHtml = (items, { openFirst = false } = {}) =>
@@ -91,7 +90,7 @@
   // Fill elements such as <span data-bind="deliveryFee"></span> with store settings.
   function bindConfig(root = document) {
     $$('[data-wa-link]', root).forEach((a) => {
-      const url = U.whatsappUrl(a.dataset.waText || `Hi ${cfg.brand}! I would like to place an order.`);
+      const url = U.whatsappUrl(a.dataset.waText || `Hi ${cfg.brand}! I have a question about your products.`);
       if (url) a.href = url;
     });
     const dl = cfg.delivery || {};
@@ -112,13 +111,21 @@
     $$('[data-show-if]', root).forEach((el) => {
       const key = el.dataset.showIf;
       const on =
-        key === 'whatsapp' ? !!U.whatsappUrl() :
-        key === 'phone' ? !!cfg.phone :
-        key === 'email' ? !!cfg.email :
-        key === 'deliveryFee' ? !!Number(dl.fee) :
-        key === 'freeAbove' ? !!(Number(dl.fee) && dl.freeAbove) :
-        key === 'flatFee' ? !!(Number(dl.fee) && !dl.freeAbove) :
-        key === 'noDeliveryFee' ? !Number(dl.fee) : true;
+        key === 'whatsapp'
+          ? !!U.whatsappUrl()
+          : key === 'phone'
+            ? !!cfg.phone
+            : key === 'email'
+              ? !!cfg.email
+              : key === 'deliveryFee'
+                ? !!Number(dl.fee)
+                : key === 'freeAbove'
+                  ? !!(Number(dl.fee) && dl.freeAbove)
+                  : key === 'flatFee'
+                    ? !!(Number(dl.fee) && !dl.freeAbove)
+                    : key === 'noDeliveryFee'
+                      ? !Number(dl.fee)
+                      : true;
       el.hidden = !on;
     });
   }
@@ -141,7 +148,10 @@
     el.setAttribute('role', 'region');
     el.setAttribute('aria-label', 'Store announcements');
     el.innerHTML = announcements
-      .map((a, i) => `<p class="announce__item${i === 0 ? ' is-active' : ''}"${i ? ' aria-hidden="true"' : ''}>${icon(a.icon)}<span>${esc(a.text)}</span></p>`)
+      .map(
+        (a, i) =>
+          `<p class="announce__item${i === 0 ? ' is-active' : ''}"${i ? ' aria-hidden="true"' : ''}>${icon(a.icon)}<span>${esc(a.text)}</span></p>`
+      )
       .join('');
     if (announcements.length < 2 || U.reducedMotion()) return;
     const items = $$('.announce__item', el);
@@ -173,6 +183,7 @@
   ];
 
   function activeKey() {
+    const page = currentPage();
     if (page === 'shop') {
       const c = U.param('category');
       return c && U.getCategory(c) ? `cat:${c}` : 'shop';
@@ -201,7 +212,7 @@
       <div class="container header__inner">
         <button type="button" class="icon-btn header__menu" aria-label="Open menu" aria-controls="mobile-nav" aria-expanded="false" data-open-menu>${icon('menu')}</button>
         <a class="header__logo" href="index.html" aria-label="${esc(cfg.brand)}, home">
-          <img src="assets/images/brand/logo-horizontal-light.svg" alt="${esc(cfg.brand)}" width="183" height="79">
+          <img src="${U.asset('assets/images/brand/logo-horizontal-light.svg')}" alt="${esc(cfg.brand)}" width="183" height="79">
         </a>
         <nav class="header__nav" aria-label="Main">
           <ul>${NAV.filter((n) => n.key !== 'home')
@@ -224,13 +235,13 @@
     const wrap = document.createElement('div');
     wrap.className = 'drawer drawer--left drawer--menu';
     wrap.id = 'mobile-nav';
-    const wa = U.whatsappUrl(`Hi ${cfg.brand}! I would like to place an order.`);
+    const wa = U.whatsappUrl(`Hi ${cfg.brand}! I have a question about your products.`);
     const tel = U.telUrl();
     wrap.innerHTML = `
       <div class="drawer__overlay" data-close></div>
       <div class="drawer__panel" role="dialog" aria-modal="true" aria-label="Menu" tabindex="-1">
         <div class="drawer__head">
-          <img src="assets/images/brand/logo-horizontal-light.svg" alt="${esc(cfg.brand)}" width="183" height="79" class="menu__logo">
+          <img src="${U.asset('assets/images/brand/logo-horizontal-light.svg')}" alt="${esc(cfg.brand)}" width="183" height="79" class="menu__logo">
           <button type="button" class="icon-btn" data-close aria-label="Close menu">${icon('close')}</button>
         </div>
         <nav class="menu__nav" aria-label="Mobile">
@@ -238,7 +249,7 @@
         </nav>
         <div class="menu__foot">
           <p class="menu__note">${icon('cash')} Cash on Delivery · ${esc(d.shortTimeText || '')}</p>
-          ${wa ? `<a class="btn btn--wa btn--block" href="${wa}" target="_blank" rel="noopener">${icon('whatsapp')}<span>Order on WhatsApp</span></a>` : ''}
+          ${wa ? `<a class="btn btn--wa btn--block" href="${wa}" target="_blank" rel="noopener">${icon('whatsapp')}<span>Chat on WhatsApp</span></a>` : ''}
           ${tel ? `<a class="btn btn--outline-light btn--block" href="${tel}">${icon('phone')}<span>Call ${esc(cfg.phone)}</span></a>` : ''}
         </div>
       </div>`;
@@ -455,7 +466,7 @@
     const wa = U.whatsappUrl(`Hi ${cfg.brand}!`);
     const tel = U.telUrl();
     const contact = [
-      wa ? `<li><a href="${wa}" target="_blank" rel="noopener">${icon('whatsapp')}<span>WhatsApp us</span></a></li>` : '',
+      wa ? `<li><a href="${wa}" target="_blank" rel="noopener">${icon('whatsapp')}<span>Chat on WhatsApp</span></a></li>` : '',
       tel ? `<li><a href="${tel}">${icon('phone')}<span>${esc(cfg.phone)}</span></a></li>` : '',
       cfg.email ? `<li><a href="mailto:${esc(cfg.email)}">${icon('mail')}<span>${esc(cfg.email)}</span></a></li>` : '',
       cfg.location ? `<li><span class="footer__plain">${icon('pin')}<span>${esc(cfg.location)}</span></span></li>` : ''
@@ -472,7 +483,7 @@
       </div>
       <div class="container footer__top">
         <div class="footer__brand">
-          <a href="index.html" aria-label="${esc(cfg.brand)}, home"><img src="assets/images/brand/logo-stacked-light.svg" alt="${esc(cfg.brand)}" width="250" height="194" loading="lazy"></a>
+          <a href="index.html" aria-label="${esc(cfg.brand)}, home"><img src="${U.asset('assets/images/brand/logo-stacked-light.svg')}" alt="${esc(cfg.brand)}" width="250" height="194" loading="lazy"></a>
           <p class="footer__about">Pure hair care and cooking oils made with natural ingredients. 100% original, delivered with care across Pakistan.</p>
           ${socialLinks()}
         </div>
@@ -509,10 +520,12 @@
       </div>`;
   }
 
+  let fab = null;
   function renderWhatsAppFab() {
-    if (page === 'checkout' || page === 'success') return;
     const wa = U.whatsappUrl(`Hi ${cfg.brand}! I would like to know more about your products.`);
     if (!wa) return;
+    const wrap = document.createElement('aside');
+    wrap.setAttribute('aria-label', 'WhatsApp chat');
     const a = document.createElement('a');
     a.className = 'wa-fab';
     a.href = wa;
@@ -520,7 +533,9 @@
     a.rel = 'noopener';
     a.setAttribute('aria-label', 'Chat with us on WhatsApp');
     a.innerHTML = icon('whatsapp');
-    document.body.appendChild(a);
+    wrap.appendChild(a);
+    document.body.appendChild(wrap);
+    fab = wrap;
   }
 
   /* ------------------------------------------------------------------
@@ -619,7 +634,8 @@
         const id = buy.dataset.buy;
         const qty = qtyFor(buy);
         if (E.cart.qtyOf(id) < qty) E.cart.setQty(id, qty);
-        window.location.href = 'checkout.html';
+        if (cartDrawer) cartDrawer.close({ restoreFocus: false });
+        E.nav.go('checkout.html');
         return;
       }
       const openCart = e.target.closest('[data-open-cart]');
@@ -696,11 +712,15 @@
     bindGlobalEvents();
     bindIcons();
     bindConfig();
-    document.addEventListener('DOMContentLoaded', () => {
-      bindIcons();
-      bindConfig();
-      refreshReveals();
-    });
+  }
+
+  // Called by nav.js after a page's content has been rendered (every page, both site modes)
+  function afterPageRender(key) {
+    bindIcons();
+    bindConfig();
+    setActiveNav();
+    refreshReveals();
+    if (fab) fab.hidden = key === 'checkout' || key === 'success';
   }
 
   E.ui = {
@@ -713,6 +733,7 @@
     faqHtml,
     bindConfig,
     bindIcons,
+    afterPageRender,
     lineItemHtml,
     totalsHtml,
     keepFocus,

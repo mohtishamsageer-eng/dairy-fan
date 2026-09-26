@@ -1466,21 +1466,24 @@ body.has-buybar .wa-fab { bottom: 6rem; }
 }
 .stage__bottle--sm { height: 76%; }
 .stage__bottle.is-active { opacity: 1; transform: translate(-50%, 0) scale(1); }
-.stage__group { position: absolute; inset: 0; opacity: 0; transition: opacity 0.7s var(--ease); }
+/* Slide 1: the four bottles as one composed image (its own pedestal, shadows and props) */
+.stage__group { position: absolute; inset: 0; z-index: 2; opacity: 0; transition: opacity 0.7s var(--ease); }
 .stage__group.is-active { opacity: 1; }
 .stage__group img {
   position: absolute;
-  bottom: 9.5%;
-  width: auto;
-  filter: drop-shadow(0 26px 24px rgba(0, 0, 0, 0.55));
-  transform: translateY(30px);
+  left: 50%;
+  bottom: 0;
+  width: 122%;
+  max-width: none;
+  height: 96%;
+  object-fit: contain;
+  object-position: 50% 100%;
+  transform: translate(-50%, 26px);
   transition: transform 1.1s var(--ease);
 }
-.stage__group.is-active img { transform: none; }
-.stage__group img:nth-child(1) { left: 16%; height: 62%; z-index: 3; transition-delay: 0.05s; }
-.stage__group img:nth-child(2) { left: 33%; height: 76%; z-index: 1; transition-delay: 0.12s; }
-.stage__group img:nth-child(3) { left: 51%; height: 76%; z-index: 2; transition-delay: 0.19s; }
-.stage__group img:nth-child(4) { left: 67%; height: 61%; z-index: 4; transition-delay: 0.26s; }
+.stage__group.is-active img { transform: translate(-50%, 0); }
+.stage__pedestal { transition: opacity 0.6s var(--ease); }
+.hero[data-slide='0'] .stage__pedestal { opacity: 0; }
 .stage__tag {
   position: absolute;
   z-index: 5;
@@ -1781,9 +1784,6 @@ body.has-buybar .wa-fab { bottom: 6rem; }
 .size-chip { padding: 0.5rem 1rem; border: 1.5px solid var(--ink); border-radius: var(--radius); font-weight: 500; color: var(--ink); background: var(--paper); }
 .buy-row { display: grid; grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr); gap: 0.75rem; }
 .buy-row .btn { min-height: 56px; }
-.pdp__wa { display: inline-flex; align-items: center; gap: 0.55rem; font-size: 0.9rem; color: var(--wa); font-weight: 500; justify-self: start; }
-.pdp__wa svg { width: 20px; height: 20px; }
-.pdp__wa:hover { text-decoration: underline; text-underline-offset: 3px; }
 .assure { list-style: none; display: grid; gap: 0.9rem; padding: 1.2rem 1.35rem; border: 1px dashed rgba(168, 130, 61, 0.55); border-radius: var(--radius-lg); background: rgba(201, 164, 92, 0.06); }
 .assure li { display: flex; align-items: flex-start; gap: 0.85rem; font-size: 0.92rem; }
 .assure svg { flex: none; width: 22px; height: 22px; color: var(--gold-ink); margin-top: 1px; }
@@ -1992,6 +1992,20 @@ body.has-buybar .wa-fab { bottom: 6rem; }
 }
 .success__id strong { font-weight: 600; color: var(--gold-ink); }
 .success__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; }
+.demo-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  max-width: 560px;
+  padding: 0.85rem 1.1rem;
+  border: 1px dashed var(--gold-3);
+  border-radius: var(--radius-md);
+  background: rgba(201, 164, 92, 0.08);
+  font-size: 0.88rem;
+  color: var(--ink-2);
+  text-align: left;
+}
+.demo-note svg { flex: none; width: 18px; height: 18px; margin-top: 2px; color: var(--gold-ink); }
 .timeline { list-style: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
 .timeline li { position: relative; display: grid; gap: 0.5rem; justify-items: center; align-content: start; text-align: center; font-size: 0.88rem; color: var(--muted); }
 .timeline li::before { content: ''; position: absolute; top: 22px; left: calc(-50% + 30px); right: calc(50% + 30px); height: 1px; background: var(--line-strong); }

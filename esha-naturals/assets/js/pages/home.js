@@ -17,7 +17,7 @@
   };
 
   /* ---------------- Hero slideshow ---------------- */
-  function initHero() {
+  function initHero(ctx) {
     const hero = $('#hero');
     if (!hero) return;
     const slidesWrap = $('[data-hero-slides]', hero);
@@ -45,7 +45,7 @@
       );
       stage.insertAdjacentHTML(
         'beforeend',
-        `<img class="stage__bottle${p.category === 'hair-care' ? ' stage__bottle--sm' : ''}" src="${p.images.product}" alt="" width="${p.images.width}" height="${p.images.height}" decoding="async" fetchpriority="low" data-slide-img>`
+        `<img class="stage__bottle${p.category === 'hair-care' ? ' stage__bottle--sm' : ''}" src="${U.asset(p.images.product)}" alt="" width="${p.images.width}" height="${p.images.height}" decoding="async" fetchpriority="low" data-slide-img>`
       );
     });
 
@@ -106,6 +106,7 @@
         s.inert = !on;
       });
       visuals.forEach((v, k) => v.classList.toggle('is-active', k === index));
+      hero.dataset.slide = String(index);
       dots.forEach((dot, k) => dot.setAttribute('aria-current', String(k === index)));
       current.textContent = pad(index + 1);
       hero.style.setProperty('--hero-glow', glows[index]);
@@ -146,7 +147,8 @@
     hero.addEventListener('focusout', (e) => {
       if (!hero.contains(e.relatedTarget)) setHold(hero.matches(':hover'));
     });
-    document.addEventListener('visibilitychange', () => setHold(document.hidden || hero.matches(':hover')));
+    ctx.on(document, 'visibilitychange', () => setHold(document.hidden || hero.matches(':hover')));
+    ctx.cleanup(() => clearTimeout(timer));
 
     hero.addEventListener('keydown', (e) => {
       if (e.target.closest('input, textarea')) return;
@@ -157,15 +159,23 @@
     // Swipe on touch screens
     let sx = 0;
     let sy = 0;
-    hero.addEventListener('touchstart', (e) => {
-      sx = e.touches[0].clientX;
-      sy = e.touches[0].clientY;
-    }, { passive: true });
-    hero.addEventListener('touchend', (e) => {
-      const dx = e.changedTouches[0].clientX - sx;
-      const dy = e.changedTouches[0].clientY - sy;
-      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.3) go(index + (dx < 0 ? 1 : -1));
-    }, { passive: true });
+    hero.addEventListener(
+      'touchstart',
+      (e) => {
+        sx = e.touches[0].clientX;
+        sy = e.touches[0].clientY;
+      },
+      { passive: true }
+    );
+    hero.addEventListener(
+      'touchend',
+      (e) => {
+        const dx = e.changedTouches[0].clientX - sx;
+        const dy = e.changedTouches[0].clientY - sy;
+        if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.3) go(index + (dx < 0 ? 1 : -1));
+      },
+      { passive: true }
+    );
 
     setPlaying(playing);
     go(0);
@@ -192,7 +202,13 @@
         const ps = U.productsIn(c.id);
         return `<a class="cat-card cat-card--${c.id === 'hair-care' ? 'hair' : 'cook'} reveal" href="${U.categoryUrl(c)}" style="--glow:${c.glow};--d:${i * 0.1}s">
           <div class="cat-card__stage" aria-hidden="true">
-            ${ps.slice(0, 2).map((p) => `<img src="${p.images.productSm}" alt="" width="${p.images.smWidth}" height="${p.images.smHeight}" loading="lazy" decoding="async">`).join('')}
+            ${ps
+              .slice(0, 2)
+              .map(
+                (p) =>
+                  `<img src="${U.asset(p.images.productSm)}" alt=""" width="${p.images.smWidth}" height="${p.images.smHeight}" loading="lazy" decoding="async">`
+              )
+              .join('')}
           </div>
           <div class="cat-card__body">
             <p class="cat-card__count">${ps.length} product${ps.length === 1 ? '' : 's'}</p>
@@ -235,8 +251,11 @@
       <div class="spotlight__stage reveal" style="--d:.1s" aria-hidden="true">
         <div class="stage__ring"></div>
         <div class="stage__pedestal"></div>
-        <img class="stage__bottle" src="${p.images.product}" alt="" width="${p.images.width}" height="${p.images.height}" loading="lazy" decoding="async">
-        ${p.ingredients.slice(0, 3).map((ing, i) => `<span class="callout callout--${i + 1}"><i>${esc(ing.name.charAt(0))}</i>${esc(ing.name)}</span>`).join('')}
+        <img class="stage__bottle" src="${U.asset(p.images.product)}" alt="" width="${p.images.width}" height="${p.images.height}" loading="lazy" decoding="async">
+        ${p.ingredients
+          .slice(0, 3)
+          .map((ing, i) => `<span class="callout callout--${i + 1}"><i>${esc(ing.name.charAt(0))}</i>${esc(ing.name)}</span>`)
+          .join('')}
       </div>
       <ul class="benefit-list reveal" style="--d:.2s">
         ${p.highlights.map((h) => `<li>${icon(h.icon)}<div><strong>${esc(h.title)}</strong><span>${esc(h.text || '')}</span></div></li>`).join('')}
@@ -259,11 +278,13 @@
     if (el) el.innerHTML = ui.faqHtml();
   }
 
-  initHero();
-  renderMarquee();
-  renderCategories();
-  renderProducts();
-  renderSpotlight();
-  renderArticles();
-  renderFaq();
+  E.pages.home = function (ctx) {
+    initHero(ctx);
+    renderMarquee();
+    renderCategories();
+    renderProducts();
+    renderSpotlight();
+    renderArticles();
+    renderFaq();
+  };
 })(window.ESHA);
