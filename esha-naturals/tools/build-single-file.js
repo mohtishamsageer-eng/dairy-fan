@@ -5,6 +5,10 @@
  * Open it in any browser, send it to someone, or upload it as index.html to a host.
  *
  *   node tools/build-single-file.js
+ *
+ * Preview variant for a claude.ai page (no <html>/<head>/<body> wrapper, orders run as a demo):
+ *
+ *   node tools/build-single-file.js --artifact <output.html>
  */
 'use strict';
 
@@ -12,7 +16,9 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
-const OUT = path.join(ROOT, 'dist', 'esha-naturals.html');
+const artifactArg = process.argv.indexOf('--artifact');
+const ARTIFACT = artifactArg !== -1;
+const OUT = ARTIFACT ? path.resolve(process.argv[artifactArg + 1] || 'esha-naturals-preview.html') : path.join(ROOT, 'dist', 'esha-naturals.html');
 
 const read = (p) => fs.readFileSync(path.join(ROOT, p), 'utf8');
 const exists = (p) => fs.existsSync(path.join(ROOT, p));
@@ -112,7 +118,33 @@ const index = read('index.html');
 const title = (index.match(/<title>([\s\S]*?)<\/title>/) || [])[1];
 const desc = (index.match(/<meta name="description" content="([^"]*)"/) || [])[1];
 
-const out = `<!doctype html>
+const body = `<a class="skip-link" href="#main">Skip to content</a>
+<div id="announce" class="announce"></div>
+<header id="site-header" class="site-header"></header>
+<main id="main" tabindex="-1"></main>
+<footer id="site-footer" class="site-footer"></footer>
+<noscript><p style="padding:1rem;text-align:center;background:#1a120b;color:#f3e8d6">Please enable JavaScript to view this website.</p></noscript>
+${templates.join('\n')}`;
+
+// claude.ai page: the host adds the document wrapper; content must be visible without scrolling
+// (no fade-in waiting for scroll) and orders cannot leave the page, so they run as a demo.
+const artifactOut = `<title>${(title || '').split('|')[0].trim()}</title>
+<style>
+${css}
+.js .reveal { opacity: 1; transform: none; }
+</style>
+<script>document.documentElement.classList.add('js'); document.body.dataset.page = 'home';</script>
+${body}
+<script>window.ESHA_SPA = true; window.ESHA_DEMO = true; window.ESHA_ARTIFACT = true;</script>
+<script>
+${scriptSafe(assetsScript)}
+</script>
+<script>
+${scriptSafe(scripts)}
+</script>
+`;
+
+const out = ARTIFACT ? artifactOut : `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -127,13 +159,7 @@ ${css}
 <script>document.documentElement.classList.add('js');</script>
 </head>
 <body data-page="home">
-<a class="skip-link" href="#main">Skip to content</a>
-<div id="announce" class="announce"></div>
-<header id="site-header" class="site-header"></header>
-<main id="main" tabindex="-1"></main>
-<footer id="site-footer" class="site-footer"></footer>
-<noscript><p style="padding:1rem;text-align:center;background:#1a120b;color:#f3e8d6">Please enable JavaScript to view this website.</p></noscript>
-${templates.join('\n')}
+${body}
 <script>window.ESHA_SPA = true;</script>
 <script>
 ${scriptSafe(assetsScript)}

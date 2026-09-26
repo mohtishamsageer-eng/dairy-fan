@@ -556,7 +556,7 @@ textarea.input { min-height: 96px; resize: vertical; }
 
 .site-header {
   position: sticky;
-  top: 0;
+  top: env(safe-area-inset-top, 0px);
   z-index: 50;
   min-height: var(--header-h);
   background: var(--espresso);
@@ -836,7 +836,7 @@ textarea.input { min-height: 96px; resize: vertical; }
 .wa-fab {
   position: fixed;
   right: 1.25rem;
-  bottom: 1.25rem;
+  bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
   z-index: 60;
   display: grid;
   place-items: center;
@@ -3805,7 +3805,8 @@ ESHA.faqs = function () {
 
   // Emails can only be sent from the published website (http/https), not from a file opened
   // on a computer or an embedded preview. There the site runs as a demo.
-  const isLive = () => /^https?:$/.test(window.location.protocol) && window.origin !== 'null';
+  // window.ESHA_DEMO is set by the preview build (tools/build-single-file.js --artifact).
+  const isLive = () => !window.ESHA_DEMO && /^https?:$/.test(window.location.protocol) && window.origin !== 'null';
 
   const itemsText = (order, sep) => order.items.map((i, n) => `${n + 1}. ${i.name} (${i.size}) × ${i.qty} = ${money(i.total)}`).join(sep);
 
@@ -5755,6 +5756,7 @@ ESHA.faqs = function () {
         <div class="place-order">
           <button type="button" class="btn btn--gold btn--lg btn--block" data-place-order></button>
           <p class="place-order__terms">By placing your order you agree to our <a href="policies.html">shipping, returns &amp; privacy policies</a>.</p>
+          ${E.orders.isLive() ? '' : `<p class="demo-note">${icon('info')}<span><strong>Preview.</strong> Orders placed here are not sent. On the live website every order is emailed to ${esc(cfg.brand)}.</span></p>`}
         </div>
       </form>
       <aside class="summary-card" aria-labelledby="summary-title" data-summary></aside>
@@ -6009,7 +6011,7 @@ ESHA.faqs = function () {
 
       <div class="success__actions">
         <a class="btn btn--dark" href="shop.html">Continue shopping</a>
-        <button type="button" class="btn btn--outline" data-print>${icon('box')}<span>Print receipt</span></button>
+        ${window.ESHA_ARTIFACT ? '' : `<button type="button" class="btn btn--outline" data-print>${icon('box')}<span>Print receipt</span></button>`}
       </div>
     </div>`;
 

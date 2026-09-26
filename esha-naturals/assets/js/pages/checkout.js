@@ -140,6 +140,7 @@
         <div class="place-order">
           <button type="button" class="btn btn--gold btn--lg btn--block" data-place-order></button>
           <p class="place-order__terms">By placing your order you agree to our <a href="policies.html">shipping, returns &amp; privacy policies</a>.</p>
+          ${E.orders.isLive() ? '' : `<p class="demo-note">${icon('info')}<span><strong>Preview.</strong> Orders placed here are not sent. On the live website every order is emailed to ${esc(cfg.brand)}.</span></p>`}
         </div>
       </form>
       <aside class="summary-card" aria-labelledby="summary-title" data-summary></aside>

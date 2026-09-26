@@ -84,7 +84,7 @@
 
       <div class="success__actions">
         <a class="btn btn--dark" href="shop.html">Continue shopping</a>
-        <button type="button" class="btn btn--outline" data-print>${icon('box')}<span>Print receipt</span></button>
+        ${window.ESHA_ARTIFACT ? '' : `<button type="button" class="btn btn--outline" data-print>${icon('box')}<span>Print receipt</span></button>`}
       </div>
     </div>`;
 

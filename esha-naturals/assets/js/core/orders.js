@@ -18,7 +18,8 @@
 
   // Emails can only be sent from the published website (http/https), not from a file opened
   // on a computer or an embedded preview. There the site runs as a demo.
-  const isLive = () => /^https?:$/.test(window.location.protocol) && window.origin !== 'null';
+  // window.ESHA_DEMO is set by the preview build (tools/build-single-file.js --artifact).
+  const isLive = () => !window.ESHA_DEMO && /^https?:$/.test(window.location.protocol) && window.origin !== 'null';
 
   const itemsText = (order, sep) => order.items.map((i, n) => `${n + 1}. ${i.name} (${i.size}) × ${i.qty} = ${money(i.total)}`).join(sep);
 
