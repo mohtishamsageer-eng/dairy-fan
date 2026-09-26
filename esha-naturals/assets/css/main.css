@@ -1545,7 +1545,7 @@ body.has-buybar .wa-fab { bottom: 6rem; }
   background: var(--espresso);
   box-shadow: var(--shadow);
 }
-.arch img { width: 100%; height: 100%; object-fit: cover; object-position: 72% 40%; }
+.arch img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; }
 .arch-wrap { position: relative; }
 .arch-wrap::before {
   content: '';

@@ -19,7 +19,7 @@ ESHA.articles = [
     excerpt:
       'Losing some hair every day is normal. Here is what makes it worse, and the simple oiling habit that keeps roots nourished and strands stronger.',
     cover: 'assets/images/journal/why-hair-falls.webp',
-    coverAlt: 'Fresh amla beside a bottle of Esha Naturals Anti Hair Fall Oil',
+    coverAlt: 'Esha Naturals Anti Hair Fall Oil with bowls of fresh amla',
     products: ['anti-hair-fall-oil'],
     body: `
       <p class="lead">Finding a few strands on your comb is completely normal. Hair grows in cycles, and most people shed around 50–100 hairs a day. When you start noticing more on your pillow, brush or shower drain, it is usually a sign that your hair and scalp need a little extra care.</p>
@@ -60,7 +60,7 @@ ESHA.articles = [
     title: 'The Right Way to Oil Your Hair: A 5-Step Ritual',
     excerpt: 'Oiling works best when it is done right. Follow this simple five-step ritual for a nourished scalp and softer, shinier hair.',
     cover: 'assets/images/journal/hair-oiling-ritual.webp',
-    coverAlt: 'A bowl of fresh amla next to Esha Naturals Hair Care Oil',
+    coverAlt: 'Esha Naturals Hair Care Oil with a bowl of fresh amla and leaves',
     products: ['hair-care-oil'],
     body: `
       <p class="lead">Most of us grew up with a weekly champi. It is a beautiful ritual, but a few small changes can make it far more effective and far less messy. Here is how to get the most out of every drop.</p>
@@ -101,7 +101,7 @@ ESHA.articles = [
     excerpt:
       'A closer look at the natural ingredients in Esha Naturals hair oils, and why each one has earned its place in traditional hair care.',
     cover: 'assets/images/journal/hair-oil-ingredients.webp',
-    coverAlt: 'Esha Naturals Hair Care Oil and Anti Hair Fall Oil side by side',
+    coverAlt: 'Esha Naturals Anti Hair Fall Oil and Hair Care Oil side by side with fresh amla',
     products: ['anti-hair-fall-oil', 'hair-care-oil'],
     body: `
       <p class="lead">Great hair care starts with honest ingredients. Here is what goes into Esha Naturals hair oils, and what each ingredient is known for.</p>
@@ -216,7 +216,7 @@ ESHA.articles = [
     excerpt:
       'Both are pure, natural and full of flavour, but each shines in different dishes. Use this simple guide to pick the right one.',
     cover: 'assets/images/journal/mustard-vs-sesame.webp',
-    coverAlt: 'Esha Naturals Mustard Oil and Sesame Oil side by side',
+    coverAlt: 'Esha Naturals Mustard Oil and Sesame Oil side by side with sesame seeds',
     products: ['mustard-oil', 'sesame-oil'],
     body: `
       <p class="lead">Keeping two good oils in your kitchen gives you more flavour, more variety and more balance. Here is a quick guide to when to reach for each.</p>
