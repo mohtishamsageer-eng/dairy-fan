@@ -173,9 +173,9 @@ ESHA.products = [
       productSm: 'assets/images/products/mustard-oil-sm.webp',
       poster: 'assets/images/posters/mustard-oil.webp',
       posterSm: 'assets/images/posters/mustard-oil-sm.webp',
-      width: 344,
-      height: 1100,
-      smWidth: 175,
+      width: 326,
+      height: 1096,
+      smWidth: 167,
       smHeight: 560
     },
     theme: { accent: '#e0a53a', tint: '#f1e3c2', glow: 'rgba(224, 165, 58, 0.42)' }
@@ -222,8 +222,8 @@ ESHA.products = [
       productSm: 'assets/images/products/sesame-oil-sm.webp',
       poster: 'assets/images/posters/sesame-oil.webp',
       posterSm: 'assets/images/posters/sesame-oil-sm.webp',
-      width: 329,
-      height: 1100,
+      width: 326,
+      height: 1096,
       smWidth: 167,
       smHeight: 560
     },
