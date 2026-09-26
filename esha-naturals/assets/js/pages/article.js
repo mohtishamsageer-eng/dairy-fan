@@ -20,7 +20,7 @@
       <p class="not-found__code">Oops</p>
       <h1 class="section-title">Article not found</h1>
       <p class="section-sub" style="margin:1rem auto 2rem">This article may have moved. Browse all our articles instead.</p>
-      <a class="btn btn--dark" href="journal.html">Go to the Journal</a>
+      <a class="btn btn--dark" href="journal.html">Go to the Blog</a>
     </div>`;
       document.title = `Article not found | ${cfg.brand}`;
       return;
@@ -64,7 +64,7 @@
         <nav class="breadcrumbs" aria-label="Breadcrumb">
           <ol>
             <li><a href="index.html">Home</a></li>
-            <li><a href="journal.html">Journal</a></li>
+            <li><a href="journal.html">Blog</a></li>
             <li><a href="journal.html?topic=${esc(a.topic)}">${esc(topic ? topic.name : '')}</a></li>
           </ol>
         </nav>
@@ -116,7 +116,7 @@
       moreEl.innerHTML = `<div class="container">
       <header class="section-head section-head--split reveal">
         <p class="eyebrow">Keep reading</p>
-        <h2 class="section-title">More from the <em>Journal</em></h2>
+        <h2 class="section-title">More from the <em>Blog</em></h2>
         <a class="link-arrow section-head__action" href="journal.html">All articles ${icon('arrowRight')}</a>
       </header>
       <div class="article-grid">${more.map((x, i) => ui.articleCard(x, { delay: i * 0.08 })).join('')}</div>

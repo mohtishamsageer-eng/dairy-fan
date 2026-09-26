@@ -206,7 +206,7 @@
     { href: 'shop.html', label: 'Shop All', key: 'shop' },
     { href: 'shop.html?category=hair-care', label: 'Hair Care', key: 'cat:hair-care' },
     { href: 'shop.html?category=cooking-oils', label: 'Cooking Oils', key: 'cat:cooking-oils' },
-    { href: 'journal.html', label: 'Journal', key: 'journal' },
+    { href: 'journal.html', label: 'Blog', key: 'journal' },
     { href: 'about.html', label: 'About', key: 'about' },
     { href: 'contact.html', label: 'Contact', key: 'contact' }
   ];
@@ -532,7 +532,7 @@
             <li><a href="policies.html#returns">Returns &amp; Exchanges</a></li>
             <li><a href="policies.html#privacy">Privacy Policy</a></li>
             <li><a href="contact.html#faq">FAQs</a></li>
-            <li><a href="journal.html">Journal</a></li>
+            <li><a href="journal.html">Blog</a></li>
             <li><a href="about.html">Our Story</a></li>
           </ul>
         </div>

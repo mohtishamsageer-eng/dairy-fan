@@ -14,7 +14,7 @@ categories, add to cart and place **Cash on Delivery** orders from anywhere in P
 - After placing an order the customer sees a popup to send an optional **small advance** (JazzCash or Bank of Punjab).
   The order email is sent first, so you get every order whether or not they pay. If they tap
   *"I've sent the advance"*, a second email tells you the account and transaction ID.
-- 6 short **Journal** articles on the benefits of the oils
+- 6 short **Blog** articles on the benefits of the oils (page `journal.html`)
 - About, Contact, FAQ, Shipping / Returns / Privacy pages
 - Works on mobile and desktop, fast, no monthly fees: a plain static website (HTML, CSS, JavaScript)
 - Also available as **one single file**: [`dist/esha-naturals.html`](dist/esha-naturals.html)
@@ -102,7 +102,7 @@ esha-naturals/
 ├── product.html          Product page (?id=anti-hair-fall-oil …)
 ├── checkout.html         Customer details + Cash on Delivery
 ├── order-success.html    Order confirmation
-├── journal.html          Articles list (?topic=…)
+├── journal.html          Blog: articles list (?topic=…)
 ├── article.html          Single article (?slug=…)
 ├── about.html · contact.html · policies.html · 404.html
 ├── dist/esha-naturals.html   The whole website in one file (generated)
