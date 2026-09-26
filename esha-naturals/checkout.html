@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Checkout | Esha Naturals</title>
+  <meta name="description" content="Complete your Esha Naturals order. Cash on Delivery all over Pakistan.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#1a120b">
+  <link rel="icon" href="assets/images/brand/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/images/brand/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="assets/images/brand/apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="preload" href="assets/fonts/cormorant-garamond-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/jost-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/main.css">
+  <script>document.documentElement.classList.add('js');</script>
+  <script src="assets/js/config.js" defer></script>
+  <script src="assets/js/data/products.js" defer></script>
+  <script src="assets/js/core/utils.js" defer></script>
+  <script src="assets/js/core/icons.js" defer></script>
+  <script src="assets/js/core/cart.js" defer></script>
+  <script src="assets/js/core/orders.js" defer></script>
+  <script src="assets/js/core/ui.js" defer></script>
+  <script src="assets/js/pages/checkout.js" defer></script>
+</head>
+<body data-page="checkout">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div id="announce" class="announce"></div>
+  <header id="site-header" class="site-header"></header>
+
+  <main id="main" class="checkout">
+    <div class="container">
+      <div class="checkout__head">
+        <nav class="breadcrumbs breadcrumbs--left" aria-label="Breadcrumb">
+          <ol>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="shop.html">Shop</a></li>
+            <li><span aria-current="page">Checkout</span></li>
+          </ol>
+        </nav>
+        <h1 class="checkout__title">Checkout</h1>
+        <ol class="progress-steps" aria-label="Checkout progress">
+          <li class="is-done"><span data-icon="check"></span>Cart</li>
+          <li class="is-current" aria-current="step"><span>2</span>Your details</li>
+          <li><span>3</span>Confirmation</li>
+        </ol>
+      </div>
+      <div data-checkout></div>
+    </div>
+  </main>
+
+  <footer id="site-footer" class="site-footer"></footer>
+  <noscript><p style="padding:1rem;text-align:center;background:#1a120b;color:#f3e8d6">Please enable JavaScript to place your order.</p></noscript>
+</body>
+</html>

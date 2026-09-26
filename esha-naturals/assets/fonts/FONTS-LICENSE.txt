@@ -1,0 +1,8 @@
+Fonts used on this website (self-hosted, latin subset, from the Fontsource project):
+
+- Cormorant Garamond — Copyright 2015 The Cormorant Project Authors (github.com/CatharsisFonts/Cormorant)
+- Jost — Copyright 2020 The Jost Project Authors (github.com/indestructible-type/Jost)
+- Great Vibes — Copyright 2012 The Great Vibes Project Authors (github.com/googlefonts/great-vibes)
+
+All three are licensed under the SIL Open Font License, Version 1.1.
+Full licence text: https://openfontlicense.org/open-font-license-official-text/

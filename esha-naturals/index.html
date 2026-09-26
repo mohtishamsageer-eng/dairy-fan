@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Esha Naturals | Pure Hair Care &amp; Cooking Oils in Pakistan</title>
+  <meta name="description" content="Shop 100% original Esha Naturals oils: Anti Hair Fall Oil, Hair Care Oil, Mustard Oil and Sesame Oil. Pure, natural and trusted. Cash on Delivery all over Pakistan.">
+  <meta name="theme-color" content="#1a120b">
+  <link rel="icon" href="assets/images/brand/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/images/brand/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="assets/images/brand/apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Esha Naturals">
+  <meta property="og:title" content="Esha Naturals | Pure Hair Care &amp; Cooking Oils">
+  <meta property="og:description" content="100% original hair care and cooking oils. Pure, natural and trusted. Cash on Delivery all over Pakistan.">
+  <meta property="og:image" content="assets/images/brand/og-image.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preload" href="assets/fonts/cormorant-garamond-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/jost-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/main.css">
+  <script>document.documentElement.classList.add('js');</script>
+  <script src="assets/js/config.js" defer></script>
+  <script src="assets/js/data/products.js" defer></script>
+  <script src="assets/js/data/articles.js" defer></script>
+  <script src="assets/js/data/faqs.js" defer></script>
+  <script src="assets/js/core/utils.js" defer></script>
+  <script src="assets/js/core/icons.js" defer></script>
+  <script src="assets/js/core/cart.js" defer></script>
+  <script src="assets/js/core/ui.js" defer></script>
+  <script src="assets/js/pages/home.js" defer></script>
+</head>
+<body data-page="home">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div id="announce" class="announce"></div>
+  <header id="site-header" class="site-header"></header>
+
+  <main id="main">
+    <!-- Hero slideshow: brand slide + one slide per product (added by pages/home.js) -->
+    <section class="hero grain" id="hero" aria-roledescription="carousel" aria-label="Featured products">
+      <div class="hero__rays" aria-hidden="true"></div>
+      <div class="container hero__inner">
+        <div class="hero__content">
+          <h1 class="sr-only">Esha Naturals: pure hair care and cooking oils, delivered across Pakistan</h1>
+          <div class="hero__slides" data-hero-slides>
+            <div class="hero-slide is-active" role="group" aria-roledescription="slide" aria-label="Esha Naturals collection">
+              <p class="eyebrow hero-slide__eyebrow">Pure · Natural · Trusted</p>
+              <h2 class="hero-slide__title">Pure goodness in <em>every drop</em></h2>
+              <p class="hero-slide__text">100% original hair care and cooking oils, made with natural ingredients and delivered to your doorstep anywhere in Pakistan.</p>
+              <div class="hero-slide__chips">
+                <span class="chip" data-icon="cash">Cash on Delivery</span>
+                <span class="chip" data-icon="truck"><span data-bind="deliveryShort">3–4 day delivery</span></span>
+                <span class="chip" data-icon="seal">100% Original</span>
+              </div>
+              <div class="hero-slide__actions">
+                <a class="btn btn--gold btn--lg" href="shop.html">Shop the Collection</a>
+                <a class="btn btn--outline-light btn--lg" href="shop.html?category=hair-care">Explore Hair Care</a>
+              </div>
+            </div>
+          </div>
+          <div class="hero__controls" data-hero-controls></div>
+        </div>
+        <div class="hero__visual" aria-hidden="true">
+          <div class="stage" data-hero-stage>
+            <div class="stage__ring"></div>
+            <div class="stage__pedestal"></div>
+            <div class="stage__group is-active">
+              <img src="assets/images/products/hair-care-oil.webp" alt="" width="287" height="1100" fetchpriority="high">
+              <img src="assets/images/products/mustard-oil.webp" alt="" width="331" height="1100" fetchpriority="high">
+              <img src="assets/images/products/sesame-oil.webp" alt="" width="341" height="1100" fetchpriority="high">
+              <img src="assets/images/products/anti-hair-fall-oil.webp" alt="" width="275" height="982" fetchpriority="high">
+            </div>
+            <div class="stage__tag" data-hero-tag hidden></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="marquee" data-marquee></div>
+
+    <!-- Categories -->
+    <section class="section" id="categories" aria-labelledby="categories-title">
+      <div class="container">
+        <header class="section-head section-head--center reveal">
+          <p class="eyebrow eyebrow--center">Shop by Category</p>
+          <h2 class="section-title" id="categories-title">Crafted for <em>every ritual</em></h2>
+          <p class="section-sub">From nourishing hair oils to pure cooking oils, every bottle is made with natural ingredients and trusted quality.</p>
+        </header>
+        <div class="cat-grid" data-categories></div>
+      </div>
+    </section>
+
+    <!-- Collection -->
+    <section class="section section--cream" id="collection" aria-labelledby="collection-title">
+      <div class="container">
+        <header class="section-head section-head--split reveal">
+          <p class="eyebrow">The Collection</p>
+          <h2 class="section-title" id="collection-title">Our <em>signature</em> oils</h2>
+          <p class="section-sub">Four pure essentials for your hair and your kitchen, now at special prices.</p>
+          <a class="link-arrow section-head__action" href="shop.html">View all products <span data-icon="arrowRight"></span></a>
+        </header>
+        <div class="product-grid" data-products></div>
+      </div>
+    </section>
+
+    <!-- Story -->
+    <section class="section" id="story" aria-labelledby="story-title">
+      <div class="container story">
+        <div class="arch-wrap reveal">
+          <div class="arch">
+            <img src="assets/images/posters/hair-care-oil-sm.webp" alt="Esha Naturals Hair Care Oil with fresh amla" width="640" height="960" loading="lazy" decoding="async">
+          </div>
+          <div class="arch-badge"><span><strong>100%</strong>Original<br>&amp; Pure</span></div>
+        </div>
+        <div class="story__body reveal" style="--d:.1s">
+          <p class="eyebrow">Our Promise</p>
+          <h2 class="section-title" id="story-title">Rooted in nature, <em>bottled with care</em></h2>
+          <p class="story__text">At Esha Naturals we believe the best care is the simplest. Our oils are prepared with natural ingredients trusted for generations, and bottled with care so your family can enjoy their goodness every day.</p>
+          <ul class="story__list">
+            <li><span data-icon="check"></span><div><strong>Pure &amp; natural ingredients</strong><span>Amla, castor, coconut, almond, mustard and sesame.</span></div></li>
+            <li><span data-icon="check"></span><div><strong>100% original products</strong><span>Genuine Esha Naturals quality in every bottle.</span></div></li>
+            <li><span data-icon="check"></span><div><strong>Easy, honest ordering</strong><span>Cash on Delivery, delivered in <span data-bind="deliveryTime">3–4 working days after order confirmation</span>.</span></div></li>
+          </ul>
+          <p class="story__sign">Esha Naturals</p>
+          <div><a class="btn btn--dark" href="about.html">Discover Our Story</a></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Product spotlight (rendered from product data) -->
+    <section class="section section--dark grain spotlight" id="spotlight" data-spotlight="anti-hair-fall-oil" aria-label="Product spotlight"></section>
+
+    <!-- Why us -->
+    <section class="section" aria-labelledby="why-title">
+      <div class="container">
+        <header class="section-head section-head--center reveal">
+          <p class="eyebrow eyebrow--center">Why Esha Naturals</p>
+          <h2 class="section-title" id="why-title">Goodness you can <em>trust</em></h2>
+        </header>
+        <div class="features">
+          <div class="feature reveal">
+            <span class="feature__icon" data-icon="seal"></span>
+            <h3 class="feature__title">100% Original</h3>
+            <p class="feature__text">Genuine Esha Naturals products, prepared and packed with care.</p>
+          </div>
+          <div class="feature reveal" style="--d:.08s">
+            <span class="feature__icon" data-icon="leaf"></span>
+            <h3 class="feature__title">Pure &amp; Natural</h3>
+            <p class="feature__text">Made with natural ingredients like amla, castor, coconut, mustard and sesame.</p>
+          </div>
+          <div class="feature reveal" style="--d:.16s">
+            <span class="feature__icon" data-icon="cash"></span>
+            <h3 class="feature__title">Cash on Delivery</h3>
+            <p class="feature__text">No advance payment. Pay at your doorstep when your order arrives.</p>
+          </div>
+          <div class="feature reveal" style="--d:.24s">
+            <span class="feature__icon" data-icon="truck"></span>
+            <h3 class="feature__title">Nationwide Delivery</h3>
+            <p class="feature__text">Delivered across Pakistan in <span data-bind="deliveryTime">3–4 working days after order confirmation</span>.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How to order -->
+    <section class="section section--cream" aria-labelledby="order-title">
+      <div class="container">
+        <header class="section-head section-head--center reveal">
+          <p class="eyebrow eyebrow--center">How to Order</p>
+          <h2 class="section-title" id="order-title">Simple, safe &amp; <em>cash on delivery</em></h2>
+        </header>
+        <ol class="steps">
+          <li class="step reveal">
+            <h3 class="step__title">Choose your oils</h3>
+            <p class="step__text">Browse the collection and add your favourites to the cart.</p>
+          </li>
+          <li class="step reveal" style="--d:.08s">
+            <h3 class="step__title">Place your order</h3>
+            <p class="step__text">Enter your name, mobile number and address. No advance payment needed.</p>
+          </li>
+          <li class="step reveal" style="--d:.16s">
+            <h3 class="step__title">We confirm</h3>
+            <p class="step__text">Our team calls or messages you to confirm your order details.</p>
+          </li>
+          <li class="step reveal" style="--d:.24s">
+            <h3 class="step__title">Delivered to you</h3>
+            <p class="step__text">Receive it in <span data-bind="deliveryShort">3–4 day delivery</span> after confirmation and pay cash on delivery.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Journal -->
+    <section class="section" aria-labelledby="journal-title">
+      <div class="container">
+        <header class="section-head section-head--split reveal">
+          <p class="eyebrow">The Journal</p>
+          <h2 class="section-title" id="journal-title">Benefits, rituals &amp; <em>kitchen wisdom</em></h2>
+          <p class="section-sub">Short reads on natural hair care and wholesome cooking.</p>
+          <a class="link-arrow section-head__action" href="journal.html">All articles <span data-icon="arrowRight"></span></a>
+        </header>
+        <div class="article-grid" data-articles></div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section section--cream" id="faq" aria-labelledby="faq-title">
+      <div class="container">
+        <header class="section-head section-head--center reveal">
+          <p class="eyebrow eyebrow--center">FAQs</p>
+          <h2 class="section-title" id="faq-title">Questions, <em>answered</em></h2>
+        </header>
+        <div class="faq reveal" data-faq></div>
+      </div>
+    </section>
+
+    <!-- Closing call to action -->
+    <section class="section section--dark grain cta-band" aria-labelledby="cta-title">
+      <div class="cta-band__bottles" aria-hidden="true">
+        <img src="assets/images/products/mustard-oil-sm.webp" alt="" width="168" height="560" loading="lazy">
+        <img src="assets/images/products/anti-hair-fall-oil-sm.webp" alt="" width="157" height="560" loading="lazy">
+      </div>
+      <div class="container cta-band__inner reveal">
+        <div class="ornament" aria-hidden="true"><span></span><i data-icon="dropSolid"></i><span></span></div>
+        <h2 class="display" id="cta-title">Your ritual of <em>pure goodness</em> starts here</h2>
+        <p class="section-sub">Order today and pay cash on delivery, anywhere in Pakistan.</p>
+        <div class="cta-band__actions">
+          <a class="btn btn--gold btn--lg" href="shop.html">Shop Now</a>
+          <a class="btn btn--wa btn--lg" data-wa-link data-show-if="whatsapp" hidden target="_blank" rel="noopener"><span data-icon="whatsapp"></span><span>Order on WhatsApp</span></a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="site-footer" class="site-footer"></footer>
+  <noscript><p style="padding:1rem;text-align:center;background:#1a120b;color:#f3e8d6">Please enable JavaScript to shop on this website.</p></noscript>
+</body>
+</html>

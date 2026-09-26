@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Contact Us | Esha Naturals</title>
+  <meta name="description" content="Contact Esha Naturals for orders, delivery and product questions. Cash on Delivery all over Pakistan.">
+  <meta name="theme-color" content="#1a120b">
+  <link rel="icon" href="assets/images/brand/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/images/brand/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="assets/images/brand/apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Esha Naturals">
+  <meta property="og:title" content="Contact Us | Esha Naturals">
+  <meta property="og:description" content="We're here to help with orders, delivery and product questions.">
+  <meta property="og:image" content="assets/images/brand/og-image.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preload" href="assets/fonts/cormorant-garamond-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/jost-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/main.css">
+  <script>document.documentElement.classList.add('js');</script>
+  <script src="assets/js/config.js" defer></script>
+  <script src="assets/js/data/products.js" defer></script>
+  <script src="assets/js/data/faqs.js" defer></script>
+  <script src="assets/js/core/utils.js" defer></script>
+  <script src="assets/js/core/icons.js" defer></script>
+  <script src="assets/js/core/cart.js" defer></script>
+  <script src="assets/js/core/ui.js" defer></script>
+  <script src="assets/js/pages/contact.js" defer></script>
+</head>
+<body data-page="contact">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div id="announce" class="announce"></div>
+  <header id="site-header" class="site-header"></header>
+
+  <main id="main">
+    <section class="page-hero grain">
+      <div class="container page-hero__inner">
+        <nav class="breadcrumbs" aria-label="Breadcrumb">
+          <ol>
+            <li><a href="index.html">Home</a></li>
+            <li><span aria-current="page">Contact</span></li>
+          </ol>
+        </nav>
+        <h1 class="page-hero__title">We're here <em>to help</em></h1>
+        <p class="page-hero__sub">Questions about an order, delivery or which oil is right for you? Get in touch and our team will be happy to help.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container contact-grid">
+        <div class="reveal">
+          <p class="eyebrow">Get in touch</p>
+          <h2 class="section-title" style="margin:1rem 0 2rem">Talk to <em>Esha Naturals</em></h2>
+          <div class="contact-cards" data-contact-cards></div>
+        </div>
+        <div class="form-card reveal" style="--d:.1s" data-contact-form-wrap>
+          <h2 class="form-card__title">Send us a message</h2>
+          <form class="checkout-form" novalidate data-contact-form>
+            <div class="field" data-field="cname">
+              <label class="field__label" for="f-cname">Your name <span class="req" aria-hidden="true">*</span></label>
+              <input class="input" id="f-cname" name="cname" autocomplete="name" maxlength="80" required aria-describedby="e-cname">
+              <p class="field__error" id="e-cname"><span data-icon="info"></span><span>Please enter your name.</span></p>
+            </div>
+            <div class="field" data-field="cphone">
+              <label class="field__label" for="f-cphone">Mobile number <span class="opt">(optional)</span></label>
+              <input class="input" id="f-cphone" name="cphone" type="tel" inputmode="tel" autocomplete="tel" maxlength="16" placeholder="03XX XXXXXXX">
+            </div>
+            <div class="field" data-field="cmessage">
+              <label class="field__label" for="f-cmessage">Message <span class="req" aria-hidden="true">*</span></label>
+              <textarea class="input" id="f-cmessage" name="cmessage" rows="5" maxlength="800" required aria-describedby="e-cmessage"></textarea>
+              <p class="field__error" id="e-cmessage"><span data-icon="info"></span><span>Please write your message.</span></p>
+            </div>
+            <button type="submit" class="btn btn--dark btn--lg btn--block" data-contact-submit>Send message</button>
+            <p class="field__hint" data-contact-hint></p>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--cream" id="faq" aria-labelledby="faq-title">
+      <div class="container">
+        <header class="section-head section-head--center reveal">
+          <p class="eyebrow eyebrow--center">FAQs</p>
+          <h2 class="section-title" id="faq-title">Questions, <em>answered</em></h2>
+        </header>
+        <div class="faq reveal" data-faq></div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="site-footer" class="site-footer"></footer>
+  <noscript><p style="padding:1rem;text-align:center;background:#1a120b;color:#f3e8d6">Please enable JavaScript to view this website.</p></noscript>
+</body>
+</html>
