@@ -36,10 +36,10 @@ ESHA.config = {
   currency: 'Rs',
 
   delivery: {
-    fee: 200, // delivery charge in Rs for orders below the free-delivery amount
+    fee: 250, // delivery charge in Rs for orders below the free-delivery amount
     freeAbove: 2000, // orders of this amount or more get free delivery (set 0 to always charge the fee)
-    timeText: '3–4 working days after order confirmation',
-    shortTimeText: '3–4 day delivery'
+    timeText: '3–7 working days after order confirmation',
+    shortTimeText: '3–7 day delivery'
   },
 
   maxQtyPerItem: 10,

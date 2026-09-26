@@ -26,7 +26,7 @@ ESHA.faqs = function () {
     },
     {
       q: 'How long does delivery take?',
-      a: `<p>After you place your order, our team will call you to confirm it. Your order is then delivered within <strong>${d.timeText || '3–4 working days after confirmation'}</strong>.</p>`
+      a: `<p>After you place your order, our team will call you to confirm it. Your order is then delivered within <strong>${d.timeText || '3–7 working days after confirmation'}</strong>.</p>`
     },
     {
       q: 'What are the delivery charges?',

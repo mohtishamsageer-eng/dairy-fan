@@ -617,7 +617,7 @@
   }
 
   /* ------------------------------------------------------------------
-   * Motion: a bottle flies into the cart, product cards tilt
+   * Motion: a bottle flies into the cart
    * ------------------------------------------------------------------ */
   const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -663,38 +663,7 @@
     return ms - 120;
   }
 
-  function bindCardTilt() {
-    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
-    let raf = 0;
-    document.addEventListener('pointermove', (e) => {
-      const card = e.target.closest && e.target.closest('.p-card');
-      const media = card && card.querySelector('.p-card__media');
-      if (!media || reducedMotion()) return;
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        const r = media.getBoundingClientRect();
-        const x = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
-        const y = Math.min(1, Math.max(0, (e.clientY - r.top) / r.height));
-        media.style.setProperty('--ry', `${((x - 0.5) * 10).toFixed(2)}deg`);
-        media.style.setProperty('--rx', `${((0.5 - y) * 8).toFixed(2)}deg`);
-        media.style.setProperty('--gx', `${(x * 100).toFixed(1)}%`);
-        media.style.setProperty('--gy', `${(y * 100).toFixed(1)}%`);
-      });
-    });
-    document.addEventListener(
-      'pointerout',
-      (e) => {
-        const card = e.target.closest && e.target.closest('.p-card');
-        const media = card && card.querySelector('.p-card__media');
-        if (!media || card.contains(e.relatedTarget)) return;
-        ['--rx', '--ry', '--gx', '--gy'].forEach((k) => media.style.removeProperty(k));
-      },
-      true
-    );
-  }
-
   function bindGlobalEvents() {
-    bindCardTilt();
     document.addEventListener('click', (e) => {
       const add = e.target.closest('[data-add]');
       if (add) {

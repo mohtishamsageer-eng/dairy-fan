@@ -72,9 +72,9 @@ ESHA.products = [
       productSm: 'assets/images/products/anti-hair-fall-oil-sm.webp',
       poster: 'assets/images/posters/anti-hair-fall-oil.webp',
       posterSm: 'assets/images/posters/anti-hair-fall-oil-sm.webp',
-      width: 275,
+      width: 267,
       height: 982,
-      smWidth: 157,
+      smWidth: 152,
       smHeight: 560
     },
     theme: { accent: '#d4a24c', tint: '#efe3c8', glow: 'rgba(212, 162, 76, 0.42)' }
@@ -124,9 +124,9 @@ ESHA.products = [
       productSm: 'assets/images/products/hair-care-oil-sm.webp',
       poster: 'assets/images/posters/hair-care-oil.webp',
       posterSm: 'assets/images/posters/hair-care-oil-sm.webp',
-      width: 287,
+      width: 296,
       height: 1100,
-      smWidth: 146,
+      smWidth: 151,
       smHeight: 560
     },
     theme: { accent: '#a9b25f', tint: '#ebe7d0', glow: 'rgba(169, 178, 95, 0.36)' }
@@ -173,9 +173,9 @@ ESHA.products = [
       productSm: 'assets/images/products/mustard-oil-sm.webp',
       poster: 'assets/images/posters/mustard-oil.webp',
       posterSm: 'assets/images/posters/mustard-oil-sm.webp',
-      width: 331,
+      width: 344,
       height: 1100,
-      smWidth: 168,
+      smWidth: 175,
       smHeight: 560
     },
     theme: { accent: '#e0a53a', tint: '#f1e3c2', glow: 'rgba(224, 165, 58, 0.42)' }
@@ -222,9 +222,9 @@ ESHA.products = [
       productSm: 'assets/images/products/sesame-oil-sm.webp',
       poster: 'assets/images/posters/sesame-oil.webp',
       posterSm: 'assets/images/posters/sesame-oil-sm.webp',
-      width: 341,
+      width: 329,
       height: 1100,
-      smWidth: 174,
+      smWidth: 167,
       smHeight: 560
     },
     theme: { accent: '#a57cc0', tint: '#ece2ea', glow: 'rgba(165, 124, 192, 0.36)' }

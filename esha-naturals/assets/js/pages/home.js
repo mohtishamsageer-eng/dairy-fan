@@ -150,27 +150,6 @@
     ctx.on(document, 'visibilitychange', () => setHold(document.hidden || hero.matches(':hover')));
     ctx.cleanup(() => clearTimeout(timer));
 
-    // The bottles lean gently toward the mouse pointer
-    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      let raf = 0;
-      hero.addEventListener('pointermove', (e) => {
-        cancelAnimationFrame(raf);
-        raf = requestAnimationFrame(() => {
-          const r = hero.getBoundingClientRect();
-          const x = (e.clientX - r.left) / r.width - 0.5;
-          const y = (e.clientY - r.top) / r.height - 0.5;
-          stage.style.setProperty('--ry', `${(x * 9).toFixed(2)}deg`);
-          stage.style.setProperty('--rx', `${(-y * 6).toFixed(2)}deg`);
-        });
-      });
-      hero.addEventListener('pointerleave', () => {
-        cancelAnimationFrame(raf);
-        stage.style.removeProperty('--rx');
-        stage.style.removeProperty('--ry');
-      });
-      ctx.cleanup(() => cancelAnimationFrame(raf));
-    }
-
     hero.addEventListener('keydown', (e) => {
       if (e.target.closest('input, textarea')) return;
       if (e.key === 'ArrowLeft') go(index - 1);

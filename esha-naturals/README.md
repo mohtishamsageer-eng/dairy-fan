@@ -62,7 +62,7 @@ To preview on your computer, double-click `index.html` or `dist/esha-naturals.ht
 | `whatsappNumber` | `923177161578` | WhatsApp "Chat with us" buttons (not used for orders) |
 | `phone` | `0317 7161578` | Number shown on the website |
 | `email` | `eshanaturals0@gmail.com` | Email shown on the website |
-| `delivery.fee` / `delivery.freeAbove` | Rs 200, free over Rs 2,000 | Delivery charges |
+| `delivery.fee` / `delivery.freeAbove` | Rs 250, free over Rs 2,000 | Delivery charges |
 | `advancePayment` | JazzCash 0313 7996525 · BOP 5040453415800018 (Esha Tariq) | Optional small advance shown in a popup after the order. `amount: 0` says "a small advance"; set e.g. `200` to ask for Rs 200 |
 | `social` | Instagram, Facebook, TikTok | Social links in the footer, mobile menu and contact page |
 | `orderEndpoint` | empty | Optional Google Sheet order log |
