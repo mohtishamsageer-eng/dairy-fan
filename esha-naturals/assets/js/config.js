@@ -39,7 +39,7 @@ ESHA.config = {
   // (see google-apps-script/SETUP.md). Every order, advance payment, message and review is then saved
   // in your sheet and emailed to you from your own Gmail: free, no activation, no monthly limit on orders.
   // FormSubmit (orderEmail above) is used only if the sheet cannot be reached.
-  orderEndpoint: '',
+  orderEndpoint: 'https://script.google.com/macros/s/AKfycbx-k0HjdaR5uX81zohvKfdKp-GmpE69YWxXikJFFH_EzWUPYklbYtiGR-1BDlN-5U-rdw/exec',
 
   currency: 'Rs',
 

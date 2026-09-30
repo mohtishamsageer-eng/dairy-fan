@@ -68,7 +68,7 @@ To preview on your computer, double-click `index.html` or `dist/esha-naturals.ht
 | `delivery.fee` / `delivery.freeAbove` | Rs 250, free over Rs 2,000 | Delivery charges |
 | `advancePayment` | JazzCash 0313 7996525 · BOP 5040453415800018 (Esha Tariq) | Optional small advance shown in a popup after the order. `amount: 0` says "a small advance"; set e.g. `200` to ask for Rs 200 |
 | `social` | Instagram, Facebook, TikTok | Social links in the footer, mobile menu and contact page |
-| `orderEndpoint` | empty | Google Sheet + Gmail link (recommended, see `google-apps-script/SETUP.md`) |
+| `orderEndpoint` | set | Google Sheet + Gmail link (see `google-apps-script/SETUP.md`) |
 
 ## 4. Everyday changes
 
