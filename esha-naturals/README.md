@@ -76,7 +76,7 @@ To preview on your computer, double-click `index.html` or `dist/esha-naturals.ht
 | Setting | Now | What it does |
 |---|---|---|
 | `orderEmail` | `eshanaturals0@gmail.com` | Where orders and contact messages are emailed |
-| `web3formsKey` | empty | Web3Forms access key; when set, emails go through Web3Forms (no activation) |
+| `web3formsKey` | set | Web3Forms access key; emails go through Web3Forms (no activation). Empty = FormSubmit |
 | `whatsappNumber` | `923177161578` | WhatsApp "Chat with us" buttons (not used for orders) |
 | `phone` | `0317 7161578` | Number shown on the website |
 | `email` | `eshanaturals0@gmail.com` | Email shown on the website |
