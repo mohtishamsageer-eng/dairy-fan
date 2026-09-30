@@ -1,4 +1,5 @@
-/* Esha Naturals — order creation, local order history and email delivery (Web3Forms or FormSubmit) */
+/* Esha Naturals — order creation, local order history and delivery to the store
+ * (Google Sheet + Gmail when set up, otherwise email through Web3Forms or FormSubmit) */
 (function (E) {
   'use strict';
 
@@ -64,6 +65,40 @@
       return postJSON('https://api.web3forms.com/submit', data, 15000);
     }
     return postJSON(`https://formsubmit.co/ajax/${encodeURIComponent(cfg.orderEmail)}`, fields, 15000);
+  };
+
+  // Google Sheet + Gmail (google-apps-script/Code.gs). A plain-text POST keeps it a "simple" request,
+  // so the browser can read Google's answer and know the order really arrived.
+  const postToSheet = async (payload, timeoutMs) => {
+    const controller = 'AbortController' in window ? new AbortController() : null;
+    const timer = controller ? setTimeout(() => controller.abort(), timeoutMs) : null;
+    try {
+      const res = await fetch(E.config.orderEndpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload),
+        signal: controller ? controller.signal : undefined
+      });
+      const body = await res.json();
+      return { ok: res.ok && body.ok === true, message: body.error || '' };
+    } catch (e) {
+      return { ok: false, message: e && e.name === 'AbortError' ? 'timeout' : 'network' };
+    } finally {
+      if (timer) clearTimeout(timer);
+    }
+  };
+
+  // Delivers one order, payment, message or review to the store: to the Google Sheet (which also emails
+  // the store) when orderEndpoint is set, and by email if the sheet is not set up or does not answer.
+  const dispatch = async (type, fields, extra) => {
+    const cfg = E.config;
+    if (!isLive()) return { ok: true, demo: true };
+    if (cfg.orderEndpoint) {
+      const res = await postToSheet(Object.assign({ type, fields }, extra), 20000);
+      if (res.ok) return res;
+    }
+    if (!canEmail()) return { ok: false, message: 'No order email configured' };
+    return deliver(fields);
   };
 
   const orders = {
@@ -152,20 +187,13 @@
     },
 
     // Sends the order to the store. Resolves to { ok, demo, message }. Never throws.
-    async send(order) {
-      const cfg = E.config;
-      if (!isLive()) return { ok: true, demo: true };
-      if (cfg.orderEndpoint) orders.syncSheet(order);
-      if (!canEmail()) return { ok: !!cfg.orderEndpoint, message: 'No order email configured' };
-      return deliver(orders.emailFields(order));
+    send(order) {
+      return dispatch('order', orders.emailFields(order), { order });
     },
 
     // Contact-form messages go to the same inbox.
-    async sendMessage({ name, phone, message }) {
-      const cfg = E.config;
-      if (!isLive()) return { ok: true, demo: true };
-      if (!canEmail()) return { ok: false, message: 'No email configured' };
-      return deliver({
+    sendMessage({ name, phone, message }) {
+      return dispatch('message', {
         _subject: `Website message from ${name}`,
         _template: 'table',
         _captcha: 'false',
@@ -177,12 +205,9 @@
     },
 
     // The customer reports an advance payment from the popup after the order.
-    async sendPayment(order, { method, reference }) {
-      const cfg = E.config;
-      if (!isLive()) return { ok: true, demo: true };
-      if (!canEmail()) return { ok: false, message: 'No email configured' };
+    sendPayment(order, { method, reference }) {
       const c = order.customer;
-      return deliver({
+      return dispatch('payment', {
         _subject: `Advance payment sent for order ${order.id} (${c.name})`,
         _template: 'table',
         _captcha: 'false',
@@ -197,13 +222,10 @@
     },
 
     // A customer review, emailed to the store for approval before it is shown on the website.
-    async sendReview(r) {
-      const cfg = E.config;
-      if (!isLive()) return { ok: true, demo: true };
-      if (!canEmail()) return { ok: false, message: 'No email configured' };
+    sendReview(r) {
       const p = E.utils.getProduct(r.product);
       const stars = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
-      return deliver({
+      return dispatch('review', {
         _subject: `New review (${r.rating}/5) for ${p ? p.name : r.product} from ${r.name}`,
         _template: 'table',
         _captcha: 'false',
@@ -215,20 +237,6 @@
         Date: r.date,
         'To publish': `Add it to assets/js/data/reviews.js: { product: '${r.product}', name: ${JSON.stringify(r.name)}, city: ${JSON.stringify(r.city || '')}, rating: ${r.rating}, date: '${r.date}', text: ${JSON.stringify(r.text)} },`
       });
-    },
-
-    // Optional Google Sheet log (see google-apps-script/SETUP.md). Fire-and-forget.
-    syncSheet(order) {
-      try {
-        fetch(E.config.orderEndpoint, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(order)
-        }).catch(() => {});
-      } catch (e) {
-        /* ignore */
-      }
     }
   };
 

@@ -20,7 +20,7 @@ ESHA.config = {
   // above and press "Create Access Key"; the key arrives by email. Paste it here and emails are sent
   // through Web3Forms instead of FormSubmit: no "Activate Form" step and it works on any web address.
   // Leave '' to keep using FormSubmit.
-  web3formsKey: '5d14b42a-e74f-45d8-baf3-3d5d68959cbd',
+  web3formsKey: '',
 
   // WhatsApp number for the "Chat with us" buttons only (orders are NOT sent to WhatsApp).
   // International format without "+" or spaces: 0317 7161578 -> '923177161578'. Leave '' to hide.
@@ -35,8 +35,10 @@ ESHA.config = {
   // Shown in the footer and on the contact page, e.g. 'Lahore, Pakistan'.
   location: 'Pakistan',
 
-  // Optional: Google Sheet order log. Paste your Google Apps Script "Web app" URL here
-  // (see google-apps-script/SETUP.md). Orders are then also saved to your sheet.
+  // Recommended: your own Google Sheet + Gmail. Paste the Google Apps Script "Web app" URL here
+  // (see google-apps-script/SETUP.md). Every order, advance payment, message and review is then saved
+  // in your sheet and emailed to you from your own Gmail: free, no activation, no monthly limit on orders.
+  // FormSubmit (orderEmail above) is used only if the sheet cannot be reached.
   orderEndpoint: '',
 
   currency: 'Rs',

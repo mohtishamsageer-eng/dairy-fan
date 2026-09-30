@@ -19,44 +19,29 @@ categories, add to cart and place **Cash on Delivery** orders from anywhere in P
 - Works on mobile and desktop, fast, no monthly fees: a plain static website (HTML, CSS, JavaScript)
 - Also available as **one single file**: [`dist/esha-naturals.html`](dist/esha-naturals.html)
 
-## 1. How orders reach you (email)
+## 1. How orders reach you
 
-When a customer taps **Place Order**, the website sends an email to `orderEmail`
-(set in `assets/js/config.js`) through a free email service: [Web3Forms](https://web3forms.com) when
-`web3formsKey` is set (recommended), otherwise [FormSubmit](https://formsubmit.co).
-The email subject looks like *"New order received EN-260926-AB12: Rs 2,198 (Ayesha Khan, Lahore)"* and
+**Recommended: your own Google Sheet + Gmail** (free, no activation, no monthly limit on orders).
+Every order is saved as a row in a Google Sheet (your order list, also in the Google Sheets phone app)
+and emailed to `eshanaturals0@gmail.com` from your own Gmail. Advance payments, contact messages and
+reviews get their own tabs and emails. Customers who give an email get a confirmation email.
+Set it up once with [`google-apps-script/SETUP.md`](google-apps-script/SETUP.md) and paste the link into
+`orderEndpoint` in `assets/js/config.js`.
+
+The order email subject looks like *"New order received EN-260926-AB12: Rs 2,198 (Ayesha Khan, Lahore)"* and
 contains a table with the order number, name, mobile number, city, full address, landmark,
 items, subtotal, delivery charge, total, payment method and notes. If the customer typed an
 email address, you can simply press **Reply** to answer them.
 
-**Recommended: Web3Forms (no activation, works on any web address)**
-
-1. Go to <https://web3forms.com>, type `eshanaturals0@gmail.com` and press **Create Access Key**.
-2. The access key arrives by email. Paste it into `web3formsKey` in `assets/js/config.js`
-   (it is meant to be in the website code; it can only send emails *to* you).
-3. Rebuild the single file (`node tools/build-single-file.js`), upload the website again and place a test order.
-
-The free plan covers 250 emails a month (orders, advance payments, messages and reviews together).
-With Web3Forms the customer does not get an automatic confirmation email (a paid feature); they still
-see the order confirmation page and your team calls them.
-
-**Without a key: FormSubmit one-time activation**
-
-1. Put the website online (see step 2).
-2. Place one test order yourself on the live website.
-3. FormSubmit sends an **"Activate Form"** email to `eshanaturals0@gmail.com`. Open it and click **Activate**
-   (check the Spam folder if you don't see it).
-4. Place another test order: it arrives in the inbox. From now on every order arrives automatically.
-
-FormSubmit activates each web address separately: if you move the website to a new address (for example
-your own domain), repeat the activation once. An old "Activate FormSubmit on https://…netlify.app" email
-does not cover the new domain.
+**Backup: email services.** If `orderEndpoint` is empty or Google does not answer, the website emails
+the order through [Web3Forms](https://web3forms.com) (when `web3formsKey` is set; free plan 250 emails a month)
+or otherwise [FormSubmit](https://formsubmit.co). FormSubmit needs a one-time activation per web address:
+place a test order on the live website, open the **"Activate FormSubmit on https://…"** email sent to
+`eshanaturals0@gmail.com` (check Spam) and click **Activate**. An activation for `…netlify.app` does not
+cover your own domain.
 
 > When the website is opened as a file on a computer or phone (not from a web address), it runs as a
-> **demo**: everything works, but no email is sent, and the confirmation page says so.
-
-Optional: to also keep a spreadsheet of all orders, follow
-[`google-apps-script/SETUP.md`](google-apps-script/SETUP.md) and paste the link into `orderEndpoint`.
+> **demo**: everything works, but nothing is sent, and the confirmation page says so.
 
 ## 2. Put the website online
 
@@ -76,14 +61,14 @@ To preview on your computer, double-click `index.html` or `dist/esha-naturals.ht
 | Setting | Now | What it does |
 |---|---|---|
 | `orderEmail` | `eshanaturals0@gmail.com` | Where orders and contact messages are emailed |
-| `web3formsKey` | set | Web3Forms access key; emails go through Web3Forms (no activation). Empty = FormSubmit |
+| `web3formsKey` | empty | Optional Web3Forms access key for the email backup (empty = FormSubmit) |
 | `whatsappNumber` | `923177161578` | WhatsApp "Chat with us" buttons (not used for orders) |
 | `phone` | `0317 7161578` | Number shown on the website |
 | `email` | `eshanaturals0@gmail.com` | Email shown on the website |
 | `delivery.fee` / `delivery.freeAbove` | Rs 250, free over Rs 2,000 | Delivery charges |
 | `advancePayment` | JazzCash 0313 7996525 · BOP 5040453415800018 (Esha Tariq) | Optional small advance shown in a popup after the order. `amount: 0` says "a small advance"; set e.g. `200` to ask for Rs 200 |
 | `social` | Instagram, Facebook, TikTok | Social links in the footer, mobile menu and contact page |
-| `orderEndpoint` | empty | Optional Google Sheet order log |
+| `orderEndpoint` | empty | Google Sheet + Gmail link (recommended, see `google-apps-script/SETUP.md`) |
 
 ## 4. Everyday changes
 
