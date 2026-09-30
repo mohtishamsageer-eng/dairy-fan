@@ -1,4 +1,4 @@
-/* Esha Naturals — order creation, local order history and email delivery (FormSubmit) */
+/* Esha Naturals — order creation, local order history and email delivery (Web3Forms or FormSubmit) */
 (function (E) {
   'use strict';
 
@@ -47,8 +47,28 @@
     }
   };
 
+  // Sends one email to the store. Uses Web3Forms when an access key is set in config.js (no activation,
+  // works on any web address); otherwise FormSubmit, which needs one "Activate Form" click per address.
+  const canEmail = () => !!(E.config.web3formsKey || E.config.orderEmail);
+  const deliver = (fields) => {
+    const cfg = E.config;
+    if (cfg.web3formsKey) {
+      const data = { access_key: cfg.web3formsKey, subject: fields._subject, from_name: `${cfg.brand} website` };
+      Object.keys(fields).forEach((k) => {
+        if (k[0] !== '_' && k !== 'email') data[k] = fields[k];
+      });
+      if (fields.email) {
+        data['Customer email'] = fields.email;
+        data.replyto = fields.email; // lets the store press "Reply" to answer the customer
+      }
+      return postJSON('https://api.web3forms.com/submit', data, 15000);
+    }
+    return postJSON(`https://formsubmit.co/ajax/${encodeURIComponent(cfg.orderEmail)}`, fields, 15000);
+  };
+
   const orders = {
     isLive,
+    canEmail,
 
     create(customer, notes) {
       const lines = E.cart.lines();
@@ -136,77 +156,65 @@
       const cfg = E.config;
       if (!isLive()) return { ok: true, demo: true };
       if (cfg.orderEndpoint) orders.syncSheet(order);
-      if (!cfg.orderEmail) return { ok: !!cfg.orderEndpoint, message: 'No order email configured' };
-      return postJSON(`https://formsubmit.co/ajax/${encodeURIComponent(cfg.orderEmail)}`, orders.emailFields(order), 15000);
+      if (!canEmail()) return { ok: !!cfg.orderEndpoint, message: 'No order email configured' };
+      return deliver(orders.emailFields(order));
     },
 
     // Contact-form messages go to the same inbox.
     async sendMessage({ name, phone, message }) {
       const cfg = E.config;
       if (!isLive()) return { ok: true, demo: true };
-      if (!cfg.orderEmail) return { ok: false, message: 'No email configured' };
-      return postJSON(
-        `https://formsubmit.co/ajax/${encodeURIComponent(cfg.orderEmail)}`,
-        {
-          _subject: `Website message from ${name}`,
-          _template: 'table',
-          _captcha: 'false',
-          Name: name,
-          'Mobile number': phone || '-',
-          Message: message,
-          Website: window.location.origin + window.location.pathname
-        },
-        15000
-      );
+      if (!canEmail()) return { ok: false, message: 'No email configured' };
+      return deliver({
+        _subject: `Website message from ${name}`,
+        _template: 'table',
+        _captcha: 'false',
+        Name: name,
+        'Mobile number': phone || '-',
+        Message: message,
+        Website: window.location.origin + window.location.pathname
+      });
     },
 
     // The customer reports an advance payment from the popup after the order.
     async sendPayment(order, { method, reference }) {
       const cfg = E.config;
       if (!isLive()) return { ok: true, demo: true };
-      if (!cfg.orderEmail) return { ok: false, message: 'No email configured' };
+      if (!canEmail()) return { ok: false, message: 'No email configured' };
       const c = order.customer;
-      return postJSON(
-        `https://formsubmit.co/ajax/${encodeURIComponent(cfg.orderEmail)}`,
-        {
-          _subject: `Advance payment sent for order ${order.id} (${c.name})`,
-          _template: 'table',
-          _captcha: 'false',
-          'Order ID': order.id,
-          'Customer name': c.name,
-          'Mobile number': c.phone,
-          'Paid to': method,
-          'Transaction ID / sender number': reference || '-',
-          'Order total': money(order.total),
-          Note: 'Please check your account before confirming this advance.'
-        },
-        15000
-      );
+      return deliver({
+        _subject: `Advance payment sent for order ${order.id} (${c.name})`,
+        _template: 'table',
+        _captcha: 'false',
+        'Order ID': order.id,
+        'Customer name': c.name,
+        'Mobile number': c.phone,
+        'Paid to': method,
+        'Transaction ID / sender number': reference || '-',
+        'Order total': money(order.total),
+        Note: 'Please check your account before confirming this advance.'
+      });
     },
 
     // A customer review, emailed to the store for approval before it is shown on the website.
     async sendReview(r) {
       const cfg = E.config;
       if (!isLive()) return { ok: true, demo: true };
-      if (!cfg.orderEmail) return { ok: false, message: 'No email configured' };
+      if (!canEmail()) return { ok: false, message: 'No email configured' };
       const p = E.utils.getProduct(r.product);
       const stars = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
-      return postJSON(
-        `https://formsubmit.co/ajax/${encodeURIComponent(cfg.orderEmail)}`,
-        {
-          _subject: `New review (${r.rating}/5) for ${p ? p.name : r.product} from ${r.name}`,
-          _template: 'table',
-          _captcha: 'false',
-          Product: p ? `${p.name} (${p.size})` : r.product,
-          Rating: `${stars} (${r.rating} out of 5)`,
-          Name: r.name,
-          City: r.city || '-',
-          Review: r.text,
-          Date: r.date,
-          'To publish': `Add it to assets/js/data/reviews.js: { product: '${r.product}', name: ${JSON.stringify(r.name)}, city: ${JSON.stringify(r.city || '')}, rating: ${r.rating}, date: '${r.date}', text: ${JSON.stringify(r.text)} },`
-        },
-        15000
-      );
+      return deliver({
+        _subject: `New review (${r.rating}/5) for ${p ? p.name : r.product} from ${r.name}`,
+        _template: 'table',
+        _captcha: 'false',
+        Product: p ? `${p.name} (${p.size})` : r.product,
+        Rating: `${stars} (${r.rating} out of 5)`,
+        Name: r.name,
+        City: r.city || '-',
+        Review: r.text,
+        Date: r.date,
+        'To publish': `Add it to assets/js/data/reviews.js: { product: '${r.product}', name: ${JSON.stringify(r.name)}, city: ${JSON.stringify(r.city || '')}, rating: ${r.rating}, date: '${r.date}', text: ${JSON.stringify(r.text)} },`
+      });
     },
 
     // Optional Google Sheet log (see google-apps-script/SETUP.md). Fire-and-forget.

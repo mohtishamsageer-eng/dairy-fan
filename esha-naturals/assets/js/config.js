@@ -16,6 +16,12 @@ ESHA.config = {
   // email to this address — click it once and all orders arrive automatically.
   orderEmail: 'eshanaturals0@gmail.com',
 
+  // Recommended: a free Web3Forms access key. Go to https://web3forms.com, enter the order email
+  // above and press "Create Access Key"; the key arrives by email. Paste it here and emails are sent
+  // through Web3Forms instead of FormSubmit: no "Activate Form" step and it works on any web address.
+  // Leave '' to keep using FormSubmit.
+  web3formsKey: '',
+
   // WhatsApp number for the "Chat with us" buttons only (orders are NOT sent to WhatsApp).
   // International format without "+" or spaces: 0317 7161578 -> '923177161578'. Leave '' to hide.
   whatsappNumber: '923177161578',

@@ -22,13 +22,25 @@ categories, add to cart and place **Cash on Delivery** orders from anywhere in P
 ## 1. How orders reach you (email)
 
 When a customer taps **Place Order**, the website sends an email to `orderEmail`
-(set in `assets/js/config.js`) through the free service [FormSubmit](https://formsubmit.co).
+(set in `assets/js/config.js`) through a free email service: [Web3Forms](https://web3forms.com) when
+`web3formsKey` is set (recommended), otherwise [FormSubmit](https://formsubmit.co).
 The email subject looks like *"New order received EN-260926-AB12: Rs 2,198 (Ayesha Khan, Lahore)"* and
 contains a table with the order number, name, mobile number, city, full address, landmark,
 items, subtotal, delivery charge, total, payment method and notes. If the customer typed an
 email address, you can simply press **Reply** to answer them.
 
-**One-time activation (important):**
+**Recommended: Web3Forms (no activation, works on any web address)**
+
+1. Go to <https://web3forms.com>, type `eshanaturals0@gmail.com` and press **Create Access Key**.
+2. The access key arrives by email. Paste it into `web3formsKey` in `assets/js/config.js`
+   (it is meant to be in the website code; it can only send emails *to* you).
+3. Rebuild the single file (`node tools/build-single-file.js`), upload the website again and place a test order.
+
+The free plan covers 250 emails a month (orders, advance payments, messages and reviews together).
+With Web3Forms the customer does not get an automatic confirmation email (a paid feature); they still
+see the order confirmation page and your team calls them.
+
+**Without a key: FormSubmit one-time activation**
 
 1. Put the website online (see step 2).
 2. Place one test order yourself on the live website.
@@ -36,7 +48,9 @@ email address, you can simply press **Reply** to answer them.
    (check the Spam folder if you don't see it).
 4. Place another test order: it arrives in the inbox. From now on every order arrives automatically.
 
-If you later move the website to a new address (for example your own domain), repeat the activation once.
+FormSubmit activates each web address separately: if you move the website to a new address (for example
+your own domain), repeat the activation once. An old "Activate FormSubmit on https://…netlify.app" email
+does not cover the new domain.
 
 > When the website is opened as a file on a computer or phone (not from a web address), it runs as a
 > **demo**: everything works, but no email is sent, and the confirmation page says so.
@@ -62,6 +76,7 @@ To preview on your computer, double-click `index.html` or `dist/esha-naturals.ht
 | Setting | Now | What it does |
 |---|---|---|
 | `orderEmail` | `eshanaturals0@gmail.com` | Where orders and contact messages are emailed |
+| `web3formsKey` | empty | Web3Forms access key; when set, emails go through Web3Forms (no activation) |
 | `whatsappNumber` | `923177161578` | WhatsApp "Chat with us" buttons (not used for orders) |
 | `phone` | `0317 7161578` | Number shown on the website |
 | `email` | `eshanaturals0@gmail.com` | Email shown on the website |
