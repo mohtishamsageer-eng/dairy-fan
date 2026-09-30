@@ -1,6 +1,7 @@
 /* Esha Naturals — customer reviews: rating summary, review list and "write a review" form.
- * Published reviews come from data/reviews.js. New reviews are emailed to the store for approval;
- * until then the customer who wrote one sees it on their own device, marked "awaiting approval". */
+ * Published reviews come from data/reviews.js and, when the Google Sheet is connected, from the
+ * reviews approved in the admin panel. New reviews wait for approval; until then the customer who
+ * wrote one sees it on their own device, marked "awaiting approval". */
 (function (E) {
   'use strict';
 
@@ -12,15 +13,67 @@
   const PAGE = 6;
   let uid = 0;
 
-  const published = (productId) =>
-    (E.customerReviews || [])
+  const sameReview = (a, b) => a.name === b.name && a.text === b.text && a.product === b.product;
+  let remote = []; // approved in the admin panel (Google Sheet)
+  const published = (productId) => {
+    const local = E.customerReviews || [];
+    return local
+      .concat(remote.filter((r) => !local.some((l) => sameReview(l, r))))
       .filter((r) => r && r.rating && r.text && (!productId || r.product === productId))
       .sort((a, b) => String(b.date).localeCompare(String(a.date)));
+  };
+
+  // Loads the approved reviews from the Google Sheet once per page view (cached for 10 minutes).
+  const CACHE = 'esha_reviews_cache_v1';
+  let loading = null;
+  const clean = (list) =>
+    (Array.isArray(list) ? list : [])
+      .map((r) => ({
+        product: String((r && r.product) || '').slice(0, 60),
+        name: String((r && r.name) || '').slice(0, 60),
+        city: String((r && r.city) || '').slice(0, 40),
+        rating: Math.max(1, Math.min(5, Math.round(Number(r && r.rating) || 5))),
+        date: String((r && r.date) || '').slice(0, 10),
+        text: String((r && r.text) || '').slice(0, 800)
+      }))
+      .filter((r) => r.product && r.name && r.text);
+  function load() {
+    if (loading) return loading;
+    const endpoint = cfg.orderEndpoint;
+    if (!endpoint || !E.orders || !E.orders.isLive()) return (loading = Promise.resolve(false));
+    try {
+      const hit = JSON.parse(sessionStorage.getItem(CACHE) || 'null');
+      if (hit && Date.now() - hit.t < 10 * 60 * 1000) {
+        remote = clean(hit.list);
+        return (loading = Promise.resolve(true));
+      }
+    } catch (e) {
+      /* storage blocked */
+    }
+    const controller = 'AbortController' in window ? new AbortController() : null;
+    const timer = controller ? setTimeout(() => controller.abort(), 12000) : null;
+    loading = fetch(`${endpoint}${endpoint.includes('?') ? '&' : '?'}reviews=1`, { signal: controller ? controller.signal : undefined })
+      .then((res) => res.json())
+      .then((body) => {
+        if (!body || body.ok !== true) return false;
+        remote = clean(body.reviews);
+        try {
+          sessionStorage.setItem(CACHE, JSON.stringify({ t: Date.now(), list: remote }));
+        } catch (e) {
+          /* storage blocked */
+        }
+        return true;
+      })
+      .catch(() => false)
+      .finally(() => timer && clearTimeout(timer));
+    return loading;
+  }
   let memory = []; // used when the browser blocks storage (private mode, sandboxed previews)
   const mine = (productId) => {
     const saved = store.get(MINE, []);
     const list = Array.isArray(saved) && saved.length ? saved : memory;
-    return list.filter((r) => r && (!productId || r.product === productId));
+    // once a review is approved it shows as a normal review, not as "awaiting approval"
+    return list.filter((r) => r && (!productId || r.product === productId) && !remote.some((p) => sameReview(p, r)));
   };
   const summary = (list) => {
     const count = list.length;
@@ -265,9 +318,12 @@
     });
 
     render();
+    load().then((changed) => {
+      if (changed && root.isConnected) render();
+    });
   }
 
   const aggregate = (productId) => summary(published(productId));
 
-  E.reviews = { mount, starsHtml, aggregate, published };
+  E.reviews = { mount, starsHtml, aggregate, published, load };
 })(window.ESHA);

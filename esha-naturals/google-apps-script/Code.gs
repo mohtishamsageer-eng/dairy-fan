@@ -5,6 +5,9 @@
  * to NOTIFY_EMAIL. Advance payments, contact messages and customer reviews get their own
  * sheets ("Advance payments", "Messages", "Reviews") and are emailed too.
  *
+ * Admin panel: open https://your-website/admin.html and log in with ADMIN_PASSWORD (below)
+ * to see orders, change their status, and approve reviews for the website.
+ *
  * Free, no monthly limit on orders. Gmail allows about 100 emails a day from a script;
  * if that is ever reached the order is still saved in the sheet.
  *
@@ -15,14 +18,22 @@ const NOTIFY_EMAIL = 'eshanaturals0@gmail.com'; // where new orders, payments, m
 const SEND_CUSTOMER_CONFIRMATION = true; // email the customer an order confirmation when they give an email
 const BRAND = 'Esha Naturals';
 
+// Password for the website's admin panel (admin.html). Type your own password between the quotes,
+// e.g. 'MyStrong#Pass2026', then Deploy → Manage deployments → Edit → Version: New version → Deploy.
+// Leave it empty to switch the admin panel off. Never share it; it opens all customer details.
+const ADMIN_PASSWORD = '';
+const ORDER_STATUSES = ['New', 'Confirmed', 'Dispatched', 'Delivered', 'Cancelled', 'Returned'];
+
 const ORDER_SHEET = 'Orders';
 const ORDER_HEADERS = [
   'Order ID', 'Date', 'Status', 'Name', 'Phone', 'Email', 'City', 'Address', 'Landmark',
-  'Items', 'Subtotal (Rs)', 'Delivery (Rs)', 'Total (Rs)', 'Payment', 'Notes'
+  'Items', 'Subtotal (Rs)', 'Delivery (Rs)', 'Total (Rs)', 'Payment', 'Notes', 'Advance'
 ];
 const OTHER_SHEETS = { payment: 'Advance payments', message: 'Messages', review: 'Reviews' };
 
-function doGet() {
+function doGet(e) {
+  // The website asks for the reviews you approved in the admin panel.
+  if (e && e.parameter && e.parameter.reviews) return json_({ ok: true, reviews: publishedReviews_() });
   return ContentService.createTextOutput(BRAND + ' order endpoint is running.');
 }
 
@@ -33,6 +44,7 @@ function doPost(e) {
     const body = JSON.parse((e && e.postData && e.postData.contents) || '{}');
     // Older website versions post the bare order object.
     const type = body.type || (body.id && body.customer ? 'order' : '');
+    if (type === 'admin') return handleAdmin_(body);
     if (type === 'order') return handleOrder_(body.order || body, cleanFields_(body.fields));
     if (OTHER_SHEETS[type]) return handleOther_(type, cleanFields_(body.fields));
     return json_({ ok: false, error: 'Unknown request' });
@@ -51,7 +63,7 @@ function handleOrder_(order, fields) {
 
   const sheet = getSheet_(ORDER_SHEET, ORDER_HEADERS);
   // The website may retry a failed send: never add the same order twice.
-  if (sheet.getRange('A:A').createTextFinder(order.id).matchEntireCell(true).findNext()) return json_({ ok: true, duplicate: true });
+  if (findRow_(sheet, order.id)) return json_({ ok: true, duplicate: true });
 
   const c = order.customer;
   const items = order.items
@@ -72,7 +84,8 @@ function handleOrder_(order, fields) {
     Number(order.delivery) || 0,
     Number(order.total) || 0,
     safe_(order.payment || 'Cash on Delivery'),
-    safe_(order.notes)
+    safe_(order.notes),
+    ''
   ]);
 
   // The order is saved; emails are a bonus and never make the order fail.
@@ -118,28 +131,143 @@ function handleOther_(type, fields) {
   const keys = Object.keys(fields).filter(function (k) { return k.charAt(0) !== '_'; });
   if (!keys.length) return json_({ ok: false, error: 'Missing details' });
 
+  // New reviews wait for your approval in the admin panel before they show on the website.
+  const row = Object.assign({}, fields);
+  if (type === 'review') {
+    row['Show on website'] = 'No';
+    keys.push('Show on website');
+  }
   const sheet = getSheet_(OTHER_SHEETS[type], ['Received'].concat(keys));
-  const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  const headers = headersOf_(sheet);
   keys.forEach(function (k) {
     if (headers.indexOf(k) === -1) {
       headers.push(k);
       sheet.getRange(1, headers.length).setValue(k).setFontWeight('bold');
     }
   });
-  sheet.appendRow(headers.map(function (h) { return h === 'Received' ? new Date() : safe_(fields[h]); }));
+  sheet.appendRow(headers.map(function (h) { return h === 'Received' ? new Date() : safe_(row[h]); }));
 
-  // Mark the order in the Orders sheet when the customer reports an advance payment.
+  // Note the advance on the order in the Orders sheet when the customer reports a payment.
   if (type === 'payment' && fields['Order ID']) {
     const orders = getSheet_(ORDER_SHEET, ORDER_HEADERS);
-    const cell = orders.getRange('A:A').createTextFinder(String(fields['Order ID'])).matchEntireCell(true).findNext();
-    if (cell) orders.getRange(cell.getRow(), 3).setValue('Advance sent: ' + (fields['Paid to'] || '') + ' ' + (fields['Transaction ID / sender number'] || ''));
+    const cell = findRow_(orders, fields['Order ID']);
+    if (cell) {
+      const col = columnOf_(orders, 'Advance');
+      orders.getRange(cell, col).setValue(
+        'Sent via ' + (fields['Paid to'] || '') + (fields['Transaction ID / sender number'] && fields['Transaction ID / sender number'] !== '-' ? ' (ref ' + fields['Transaction ID / sender number'] + ')' : '')
+      );
+    }
   }
 
   const emailed = notify_(fields._subject, fields, fields.email);
   return json_({ ok: true, emailed: emailed });
 }
 
+/* ---------------- Admin panel ---------------- */
+
+function handleAdmin_(body) {
+  if (!ADMIN_PASSWORD) return json_({ ok: false, error: 'setup', message: 'Set ADMIN_PASSWORD in the Apps Script first.' });
+  const cache = CacheService.getScriptCache();
+  const fails = Number(cache.get('admin_fails') || 0);
+  if (fails >= 10) return json_({ ok: false, error: 'locked', message: 'Too many wrong passwords. Try again in 15 minutes.' });
+  if (String(body.password || '') !== ADMIN_PASSWORD) {
+    cache.put('admin_fails', String(fails + 1), 900);
+    return json_({ ok: false, error: 'password', message: 'Wrong password.' });
+  }
+
+  const action = body.action;
+  if (action === 'list') {
+    return json_({
+      ok: true,
+      statuses: ORDER_STATUSES,
+      orders: readSheet_(ORDER_SHEET),
+      payments: readSheet_(OTHER_SHEETS.payment),
+      messages: readSheet_(OTHER_SHEETS.message),
+      reviews: readSheet_(OTHER_SHEETS.review)
+    });
+  }
+  if (action === 'status') {
+    if (ORDER_STATUSES.indexOf(body.status) === -1) return json_({ ok: false, error: 'Unknown status' });
+    const sheet = getSheet_(ORDER_SHEET, ORDER_HEADERS);
+    const row = findRow_(sheet, body.id);
+    if (!row) return json_({ ok: false, error: 'Order not found' });
+    sheet.getRange(row, columnOf_(sheet, 'Status')).setValue(body.status);
+    return json_({ ok: true });
+  }
+  if (action === 'review') {
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(OTHER_SHEETS.review);
+    const row = Number(body.row);
+    if (!sheet || !(row >= 2 && row <= sheet.getLastRow())) return json_({ ok: false, error: 'Review not found' });
+    sheet.getRange(row, columnOf_(sheet, 'Show on website')).setValue(body.show ? 'Yes' : 'No');
+    CacheService.getScriptCache().remove('published_reviews');
+    return json_({ ok: true });
+  }
+  return json_({ ok: false, error: 'Unknown action' });
+}
+
+// All rows of a sheet as objects (newest first, at most 1000), with their row number in _row.
+function readSheet_(name) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(name);
+  if (!sheet || sheet.getLastRow() < 2) return [];
+  const last = sheet.getLastRow();
+  const first = Math.max(2, last - 999);
+  const cols = sheet.getLastColumn();
+  const headers = headersOf_(sheet);
+  const values = sheet.getRange(first, 1, last - first + 1, cols).getValues();
+  const out = values.map(function (r, i) {
+    const o = { _row: first + i };
+    headers.forEach(function (h, c) {
+      if (h) o[h] = r[c] instanceof Date ? r[c].toISOString() : r[c];
+    });
+    return o;
+  });
+  return out.reverse();
+}
+
+// Approved reviews for the website (cached for 5 minutes).
+function publishedReviews_() {
+  const cache = CacheService.getScriptCache();
+  const hit = cache.get('published_reviews');
+  if (hit) return JSON.parse(hit);
+  const list = readSheet_(OTHER_SHEETS.review)
+    .filter(function (r) { return String(r['Show on website']).toLowerCase() === 'yes'; })
+    .map(function (r) {
+      return {
+        product: String(r['Product ID'] || ''),
+        name: String(r.Name || ''),
+        city: String(r.City || '').replace(/^-$/, ''),
+        rating: Math.max(1, Math.min(5, Number(r.Stars) || 5)),
+        date: String(r.Date || r.Received || '').slice(0, 10),
+        text: String(r.Review || '')
+      };
+    })
+    .filter(function (r) { return r.product && r.text; })
+    .slice(0, 300);
+  cache.put('published_reviews', JSON.stringify(list), 300);
+  return list;
+}
+
 /* ---------------- Helpers ---------------- */
+
+function headersOf_(sheet) {
+  return sheet.getRange(1, 1, 1, Math.max(1, sheet.getLastColumn())).getValues()[0].map(String);
+}
+
+// Column number of a header, adding the column if it is missing (older sheets).
+function columnOf_(sheet, header) {
+  const headers = headersOf_(sheet);
+  let i = headers.indexOf(header);
+  if (i === -1) {
+    i = headers.filter(String).length;
+    sheet.getRange(1, i + 1).setValue(header).setFontWeight('bold');
+  }
+  return i + 1;
+}
+
+function findRow_(sheet, id) {
+  const cell = sheet.getRange('A:A').createTextFinder(String(id || '')).matchEntireCell(true).findNext();
+  return cell ? cell.getRow() : 0;
+}
 
 function notify_(subject, fields, replyTo) {
   if (!NOTIFY_EMAIL || quota_() < 1) return false;

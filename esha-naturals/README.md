@@ -33,6 +33,11 @@ contains a table with the order number, name, mobile number, city, full address,
 items, subtotal, delivery charge, total, payment method and notes. If the customer typed an
 email address, you can simply press **Reply** to answer them.
 
+**Admin panel:** `https://eshanatural.com/admin` (password protected) shows new orders, today's orders and
+sales, every order with Call/WhatsApp buttons and a status menu, advance payments, messages, and reviews with a
+**Show on website** button (approved reviews appear on the website automatically). Switch it on by setting
+`ADMIN_PASSWORD` in the Apps Script, see [`google-apps-script/SETUP.md`](google-apps-script/SETUP.md).
+
 **Backup: email services.** If `orderEndpoint` is empty or Google does not answer, the website emails
 the order through [Web3Forms](https://web3forms.com) (when `web3formsKey` is set; free plan 250 emails a month)
 or otherwise [FormSubmit](https://formsubmit.co). FormSubmit needs a one-time activation per web address:
@@ -88,10 +93,11 @@ Customers write a review (stars, name, city, text) on the home page or a product
 **emailed to `orderEmail`** with the subject *"New review (5/5) for … from …"*; the customer sees their own
 review straight away, marked "awaiting approval" (only on their phone/computer).
 
-Reviews are **not published automatically**, so nobody can post spam or fake reviews on the store. To publish
-one, copy the ready-made line from the email's *"To publish"* row into `ESHA.customerReviews` in
-`assets/js/data/reviews.js` and upload the website again (and rebuild the single file). The average rating,
-star bars and review list update by themselves. Please only add real reviews from real customers.
+Reviews are **not published automatically**, so nobody can post spam or fake reviews on the store. Each review
+is saved in the **Reviews** tab of the Google Sheet; open the admin panel (`/admin`), tab **Reviews**, and press
+**Show on website**. It appears on the website within about 10 minutes, with the average rating and star bars
+updated automatically. (Without the Google Sheet, copy the email's *"To publish"* line into
+`ESHA.customerReviews` in `assets/js/data/reviews.js` instead.) Please only publish real reviews from real customers.
 
 ## Folder structure
 
@@ -105,6 +111,7 @@ esha-naturals/
 ├── journal.html          Blog: articles list (?topic=…)
 ├── article.html          Single article (?slug=…)
 ├── about.html · contact.html · policies.html · 404.html
+├── admin.html            Private admin panel: orders, statuses, reviews (needs the Google Sheet)
 ├── dist/esha-naturals.html   The whole website in one file (generated)
 ├── assets/
 │   ├── css/main.css

@@ -31,11 +31,34 @@ also get an order confirmation email.
 10. Rebuild the single file (`node tools/build-single-file.js`), upload the website again,
     place a test order and check that it appears in the sheet and in Gmail.
 
-The **Status** column of an order starts as `New`. It changes to `Advance sent: …` when the customer
-reports an advance payment. Change it yourself to `Confirmed`, `Dispatched` or `Delivered` as you go.
+The **Status** column of an order starts as `New`; change it in the admin panel (or the sheet) to
+`Confirmed`, `Dispatched`, `Delivered`, `Cancelled` or `Returned` as you go. When the customer reports an
+advance payment, the **Advance** column shows the account and transaction ID.
 
-To publish a review, copy the ready-made line from the review's email (or the Reviews tab) into
-`assets/js/data/reviews.js`.
+New reviews start hidden (**Show on website: No**). Publish them from the admin panel (below).
 
 > If you change `Code.gs` later, use **Deploy → Manage deployments → Edit (pencil) → Version: New version → Deploy**
 > so the same URL keeps working.
+
+## Admin panel (orders, statuses, reviews)
+
+The website has a private admin panel at **`https://your-domain/admin`** (for example
+`https://eshanatural.com/admin`). It shows the dashboard (new orders, today, sales this month), all orders
+with **Call** and **WhatsApp** buttons, a status menu (New → Confirmed → Dispatched → Delivered, or
+Cancelled / Returned), advance payments, messages and reviews. Press **Show on website** on a review to
+publish it; it appears on the website within about 10 minutes. Everything is read from and saved to this sheet.
+
+To switch it on:
+
+1. In the sheet, open **Extensions → Apps Script**.
+2. Near the top of the code, type your own password between the quotes:
+   ```js
+   const ADMIN_PASSWORD = 'YourStrongPassword';
+   ```
+   Use a long password and never share it: it opens every customer's details.
+3. Click **Save**, then **Deploy → Manage deployments → Edit (pencil) → Version: New version → Deploy**.
+   (Do not create a *new* deployment: that would give a new URL.)
+4. Open `https://your-domain/admin`, type the password and tick **Remember me on this device** on your own phone.
+
+After 10 wrong passwords the admin panel locks for 15 minutes.
+

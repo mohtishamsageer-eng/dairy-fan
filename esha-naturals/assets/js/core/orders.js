@@ -230,12 +230,16 @@
         _template: 'table',
         _captcha: 'false',
         Product: p ? `${p.name} (${p.size})` : r.product,
+        'Product ID': r.product,
+        Stars: r.rating,
         Rating: `${stars} (${r.rating} out of 5)`,
         Name: r.name,
         City: r.city || '-',
         Review: r.text,
         Date: r.date,
-        'To publish': `Add it to assets/js/data/reviews.js: { product: '${r.product}', name: ${JSON.stringify(r.name)}, city: ${JSON.stringify(r.city || '')}, rating: ${r.rating}, date: '${r.date}', text: ${JSON.stringify(r.text)} },`
+        'To publish': E.config.orderEndpoint
+          ? 'Open the admin panel (admin.html), tab Reviews, and press "Show on website".'
+          : `Add it to assets/js/data/reviews.js: { product: '${r.product}', name: ${JSON.stringify(r.name)}, city: ${JSON.stringify(r.city || '')}, rating: ${r.rating}, date: '${r.date}', text: ${JSON.stringify(r.text)} },`
       });
     }
   };
