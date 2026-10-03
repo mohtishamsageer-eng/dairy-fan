@@ -4,7 +4,7 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Environment, Lightformer, PerformanceMonitor } from "@react-three/drei";
 import { useMemo, useRef, useState } from "react";
 import { DairyFan, type PartLabels } from "./DairyFan";
-import { FAN_SLOTS, Shed } from "./Shed";
+import { FAN_SCALE, FAN_SLOTS, FAN_TILT, Shed } from "./Shed";
 import { FakeShadow } from "./FakeShadow";
 
 import type { StoryState } from "./storyState";
@@ -13,7 +13,11 @@ export type { StoryState };
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
 function Rig({ state, labels, quality }: { state: StoryState; labels?: PartLabels; quality: "high" | "low" }) {
-  const { camera, size } = useThree();
+  const { camera, size, scene } = useThree();
+  const hemi = useRef<THREE.HemisphereLight>(null!);
+  const sun = useRef<THREE.DirectionalLight>(null!);
+  const night = useMemo(() => new THREE.Color("#0B1620"), []);
+  const day = useMemo(() => new THREE.Color("#C9D9E2"), []);
   const hero = useRef<THREE.Group>(null!);
   const shed = useRef<THREE.Group>(null!);
   const shadows = useRef<THREE.Group>(null!);
@@ -23,7 +27,7 @@ function Rig({ state, labels, quality }: { state: StoryState; labels?: PartLabel
 
   useFrame((s) => {
     const aspect = size.width / size.height;
-    const fit = lerp(Math.max(1, 0.85 / aspect) * (1 + state.explode * (aspect < 1 ? 0.6 : 0)), Math.max(1, 1.15 / aspect), Math.min(1, state.shed * 1.5));   // pull back on portrait screens
+    const fit = lerp(Math.max(1, 0.85 / aspect) * (1 + state.explode * (aspect < 1 ? 0.6 : 0)), Math.max(1, 0.62 / aspect), Math.min(1, state.shed * 1.5));   // pull back on portrait screens
     tgt.set(state.tgt.x, state.tgt.y, state.tgt.z);
     pos.set(state.cam.x, state.cam.y, state.cam.z).sub(tgt).multiplyScalar(fit).add(tgt);
     camera.position.copy(pos);
@@ -32,17 +36,24 @@ function Rig({ state, labels, quality }: { state: StoryState; labels?: PartLabel
 
     const i = state.install, sh = state.shake * 0.018 * Math.sin(s.clock.elapsedTime * 90);
     hero.current.position.set(lerp(0, slot0.x, i) + sh, lerp(0, slot0.y, i) + sh * 0.6, lerp(0, slot0.z, i));
-    hero.current.scale.setScalar(lerp(1, 0.75, i));
-    hero.current.rotation.set(lerp(0, 0.38, i), state.rotY * (1 - i), 0);
+    hero.current.scale.setScalar(lerp(1, FAN_SCALE, i));
+    hero.current.rotation.set(lerp(0, FAN_TILT, i), state.rotY * (1 - i), 0);
 
     const k = Math.max(0.0001, state.shed);
     shed.current.visible = state.shed > 0.001; shed.current.scale.setScalar(k);
+    // studio night → farm daylight as the shed builds
+    const d = Math.min(1, state.shed * 1.2);
+    if (scene.background instanceof THREE.Color) scene.background.lerpColors(night, day, d);
+    if (scene.fog) { scene.fog.color.lerpColors(night, day, d); (scene.fog as THREE.Fog).near = lerp(30, 40, d); (scene.fog as THREE.Fog).far = lerp(90, 170, d); }
+    hemi.current.intensity = d * 1.5; sun.current.intensity = d * 2.2;
     const sk = Math.max(0.0001, 1 - state.install * 1.4);
     shadows.current.scale.setScalar(sk);
   });
 
   return (
     <>
+      <hemisphereLight ref={hemi} args={["#F4F1E8", "#6E6A5E", 0]} />
+      <directionalLight ref={sun} position={[-6, 14, 10]} intensity={0} color="#FFF4DE" />
       <group ref={hero}><DairyFan state={state} labels={labels} flowCount={quality === "high" ? 520 : 220} /></group>
       <group ref={shed}><Shed mist={state.mist} quality={quality} /></group>
       <group ref={shadows}><FakeShadow /></group>

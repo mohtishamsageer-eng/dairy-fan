@@ -107,13 +107,14 @@ export function ScrollStory() {
       // 70–85 installation scene
       tl.to(s, { shed: 1, duration: 7, ease: "power2.out" }, 70);
       tl.to(s, { install: 1, duration: 10 }, 71);
-      tl.to(s.cam, { x: 0.5, y: 3.8, z: 13.5, duration: 15 }, 70);
-      tl.to(s.tgt, { x: 0, y: 1.6, z: -0.5, duration: 15 }, 70);
+      tl.to(s.cam, { x: 0, y: 2.9, z: 13, duration: 15 }, 70);
+      tl.to(s.tgt, { x: 0, y: 2.6, z: -12, duration: 15 }, 70);
       tl.to(s.shift, { x: 0, y: wide ? 0 : lift, duration: 15 }, 70);
       tl.to(s.mist, { v: 1, duration: 4, ease: "none" }, 79);
       show("install", 74, 90);
       // 85–100 hand-off to the brand colour
-      tl.to(s.cam, { x: 0, y: 5, z: 21, duration: 15 }, 85);
+      tl.to(s.cam, { x: 26, y: 21, z: 36, duration: 15 }, 85);
+      tl.to(s.tgt, { x: 0, y: 2, z: -10, duration: 15 }, 85);
       tl.to(s, { rpm: 6, duration: 15 }, 85);
       tl.to(q("[data-wipe]"), { opacity: 1, duration: 10, ease: "power1.in" }, 90);
       tl.set({}, {}, 100);

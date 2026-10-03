@@ -10,8 +10,10 @@ export type FanState = { rpm: number; idle?: number; explode: number; labels: nu
 export type PartLabels = Record<"guard" | "blades" | "hub" | "motor" | "bracket" | "drum", { t: string; s: string }>;
 
 export const R = 1;      // drum radius
-export const D = 0.56;   // drum depth (≈ 28% of the 2R diameter)
-const BLUE = "#7AB3CC";
+export const D = 0.5;    // drum depth (≈ 25% of the 2R diameter, from the reference video)
+// colours sampled from the reference video of the real fan
+const DRUM = "#7E9CA0";   // matte grey-teal powder coat
+const WIRE = "#A8D8D4";   // pale aqua wire guard + front flat bars
 const clamp01 = (x: number) => Math.min(1, Math.max(0, x));
 const smooth = (a: number, b: number, x: number) => { const t = clamp01((x - a) / (b - a)); return t * t * (3 - 2 * t); };
 
@@ -138,13 +140,15 @@ export function DairyFan({ state, detail = "high", labels, flowCount = 500 }: {
     const orange = noiseTexture(256, 10);
     const grit = noiseTexture(256, 5);
     return {
-      blue: new THREE.MeshPhysicalMaterial({ color: BLUE, roughness: 0.46, metalness: 0.12, clearcoat: 0.35, clearcoatRoughness: 0.45, bumpMap: orange, bumpScale: 0.35, side: THREE.DoubleSide }),
-      wire: new THREE.MeshStandardMaterial({ color: BLUE, roughness: 0.4, metalness: 0.2 }),
+      blue: new THREE.MeshPhysicalMaterial({ color: DRUM, roughness: 0.62, metalness: 0.1, clearcoat: 0.12, clearcoatRoughness: 0.7, bumpMap: orange, bumpScale: 0.3, side: THREE.DoubleSide }),
+      wire: new THREE.MeshStandardMaterial({ color: WIRE, roughness: 0.45, metalness: 0.15 }),
       blade: new THREE.MeshStandardMaterial({ color: "#2A2E31", roughness: 0.72, metalness: 0.02, bumpMap: grit, bumpScale: 0.6 }),
       alu: new THREE.MeshStandardMaterial({ color: "#C4CCD1", roughness: 0.35, metalness: 1 }),
-      motor: new THREE.MeshStandardMaterial({ color: "#8A949C", roughness: 0.55, metalness: 0.45 }),
-      motorDark: new THREE.MeshStandardMaterial({ color: "#5D666D", roughness: 0.6, metalness: 0.5 }),
-      steel: new THREE.MeshStandardMaterial({ color: "#6A747B", roughness: 0.5, metalness: 0.85 }),
+      hub: new THREE.MeshStandardMaterial({ color: "#DCE0E1", roughness: 0.42, metalness: 0.45 }),
+      cone: new THREE.MeshStandardMaterial({ color: "#4A4F53", roughness: 0.5, metalness: 0.6 }),
+      motor: new THREE.MeshStandardMaterial({ color: "#3C4144", roughness: 0.62, metalness: 0.35, flatShading: true }),
+      motorDark: new THREE.MeshStandardMaterial({ color: "#2C3033", roughness: 0.6, metalness: 0.4 }),
+      steel: new THREE.MeshStandardMaterial({ color: "#5E7C80", roughness: 0.55, metalness: 0.35 }),
       cable: new THREE.MeshStandardMaterial({ color: "#F1F1EE", roughness: 0.6 }),
       text: new THREE.MeshBasicMaterial({ map: bladeTextTexture(), transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2 }),
       blurTex: blurDiscTexture(),
@@ -161,8 +165,18 @@ export function DairyFan({ state, detail = "high", labels, flowCount = 500 }: {
   const { wires, braces } = useMemo(() => guardSegs(hi ? 0.115 : 0.22, hi ? 0.14 : 0.3, R - 0.025, D / 2 + 0.03, 0.07), [hi]);
   const rearBars = useMemo<Seg[]>(() => {
     const s: Seg[] = []; const half = 0.99;
-    for (const bx of [-0.075, 0.075]) s.push([new THREE.Vector3(bx, -half, -D / 2 - 0.012), new THREE.Vector3(bx, half, -D / 2 - 0.012)]);
+    for (const bx of [-0.12, 0.12]) s.push([new THREE.Vector3(bx, -half, -D / 2 - 0.03), new THREE.Vector3(bx, half, -D / 2 - 0.03)]);
     return s;
+  }, []);
+  const rearGuard = useMemo(() => (hi ? guardSegs(0.115, 0.14, R - 0.025, -D / 2 - 0.012, -0.03).wires : []), [hi]);
+  const hubGeo = useMemo(() => {
+    // three-lobed cast hub plate, lobes aligned with the blades
+    const sh = new THREE.Shape();
+    for (let k = 0; k <= 72; k++) {
+      const t = (k / 72) * Math.PI * 2, r = 0.115 + 0.045 * Math.cos(3 * (t - Math.PI / 2));
+      k === 0 ? sh.moveTo(Math.cos(t) * r, Math.sin(t) * r) : sh.lineTo(Math.cos(t) * r, Math.sin(t) * r);
+    }
+    return new THREE.ExtrudeGeometry(sh, { depth: 0.045, bevelEnabled: true, bevelSize: 0.01, bevelThickness: 0.01, bevelSegments: 2 });
   }, []);
 
   const tabGeo = useMemo(() => {
@@ -187,7 +201,7 @@ export function DairyFan({ state, detail = "high", labels, flowCount = 500 }: {
 
   const cableGeo = useMemo(() => {
     const mk = (o: number) => new THREE.TubeGeometry(new THREE.CatmullRomCurve3([
-      new THREE.Vector3(0.02 + o, 0.36, -0.58), new THREE.Vector3(0.1 + o, 0.5, -0.66),
+      new THREE.Vector3(0.02 + o, 0.19, -0.5), new THREE.Vector3(0.1 + o, 0.36, -0.62),
       new THREE.Vector3(0.28 + o, 0.5, -0.9), new THREE.Vector3(0.5 + o, 0.3, -1.1), new THREE.Vector3(0.75 + o, 0.05, -1.25),
     ]), 40, 0.011, 6, false);
     return [mk(0), mk(0.03)];
@@ -261,11 +275,12 @@ export function DairyFan({ state, detail = "high", labels, flowCount = 500 }: {
       {/* ───── rotor ───── */}
       <group ref={spin} position={[0, 0, 0.02]}>
         <group ref={hub}>
-          <mesh material={m.alu} rotation={[Math.PI / 2, 0, 0]}><cylinderGeometry args={[0.14, 0.15, 0.16, 36]} /></mesh>
-          <mesh material={m.alu} position={[0, 0, 0.1]} rotation={[Math.PI / 2, 0, 0]}><cylinderGeometry args={[0.07, 0.085, 0.04, 28]} /></mesh>
+          <mesh geometry={hubGeo} material={m.hub} position={[0, 0, -0.03]} />
+          <mesh material={m.hub} position={[0, 0, 0.035]} rotation={[Math.PI / 2, 0, 0]}><cylinderGeometry args={[0.055, 0.065, 0.04, 28]} /></mesh>
+          <mesh material={m.cone} position={[0, 0, 0.06]} rotation={[Math.PI / 2, 0, 0]}><cylinderGeometry args={[0.018, 0.018, 0.02, 12]} /></mesh>
           {[0, 1, 2].map((i) => {
-            const a = (i * 2 * Math.PI) / 3 + Math.PI / 3;
-            return <mesh key={i} material={m.alu} position={[Math.cos(a) * 0.1, Math.sin(a) * 0.1, 0.085]} rotation={[Math.PI / 2, 0, 0]}><cylinderGeometry args={[0.022, 0.022, 0.03, 10]} /></mesh>;
+            const a = (i * 2 * Math.PI) / 3 + Math.PI / 2;
+            return <mesh key={i} material={m.cone} position={[Math.cos(a) * 0.12, Math.sin(a) * 0.12, 0.03]} rotation={[Math.PI / 2, 0, 0]}><cylinderGeometry args={[0.012, 0.012, 0.02, 8]} /></mesh>;
           })}
           {L && <PartLabel pos={[0.04, -0.03, 0.14]} side="r" dy={-70} title={L.hub.t} sub={L.hub.s} reg={reg} />}
         </group>
@@ -273,7 +288,7 @@ export function DairyFan({ state, detail = "high", labels, flowCount = 500 }: {
           <group key={i} ref={(g) => { blades.current[i] = g; }}>
             <group rotation={[0, 0, (i * 2 * Math.PI) / 3]}>
               {/* conical root / shank */}
-              <mesh material={m.blade} position={[0, 0.25, 0]}><cylinderGeometry args={[0.05, 0.075, 0.28, 16]} /></mesh>
+              <mesh material={m.cone} position={[0, 0.24, 0]}><cylinderGeometry args={[0.014, 0.055, 0.32, 16]} /></mesh>
               <group rotation={[0, 0.38, 0]}>
                 <mesh geometry={bladeGeo} material={m.blade} position={[0, 0, -0.007]} />
                 {/* leading-edge rib */}
@@ -292,34 +307,34 @@ export function DairyFan({ state, detail = "high", labels, flowCount = 500 }: {
         </mesh>
       </group>
 
-      {/* ───── rear bracket ───── */}
+      {/* ───── rear frame: two box-section bars + motor plate ───── */}
       <group ref={bracket}>
-        <InstancedSegs segs={rearBars} sx={0.032} sz={0.01} material={m.steel} box />
-        <mesh material={m.steel} position={[0, -0.3, -0.58]}><boxGeometry args={[0.52, 0.016, 0.62]} /></mesh>
-        <mesh material={m.steel} position={[0, 0, -D / 2 - 0.03]}><boxGeometry args={[0.34, 0.34, 0.016]} /></mesh>
-        <mesh material={m.steel} position={[0.2, -0.16, -D / 2 - 0.12]} rotation={[0.55, 0, 0]}><boxGeometry args={[0.03, 0.34, 0.012]} /></mesh>
-        <mesh material={m.steel} position={[-0.2, -0.16, -D / 2 - 0.12]} rotation={[0.55, 0, 0]}><boxGeometry args={[0.03, 0.34, 0.012]} /></mesh>
-        {[[-1, -1], [1, -1], [-1, 1], [1, 1]].map(([x, y], k) => (
-          <mesh key={k} material={m.alu} position={[x * 0.13, y * 0.13, -D / 2 - 0.045]} rotation={[Math.PI / 2, 0, 0]}><cylinderGeometry args={[0.014, 0.014, 0.02, 8]} /></mesh>
+        <InstancedSegs segs={rearBars} sx={0.05} sz={0.035} material={m.steel} box />
+        {rearGuard.length > 0 && <InstancedSegs segs={rearGuard} sx={0.0065} sz={0.0065} material={m.wire} />}
+        <mesh material={m.steel} position={[0, -0.17, -0.52]}><boxGeometry args={[0.36, 0.018, 0.46]} /></mesh>
+        <mesh material={m.steel} position={[0.12, -0.27, -0.4]} rotation={[-0.75, 0, 0]}><boxGeometry args={[0.03, 0.28, 0.012]} /></mesh>
+        <mesh material={m.steel} position={[-0.12, -0.27, -0.4]} rotation={[-0.75, 0, 0]}><boxGeometry args={[0.03, 0.28, 0.012]} /></mesh>
+        {[[-1, -1], [1, -1], [-1, 1], [1, 1]].map(([x, z], k) => (
+          <mesh key={k} material={m.alu} position={[x * 0.12, -0.152, -0.52 + z * 0.13]}><cylinderGeometry args={[0.014, 0.014, 0.02, 8]} /></mesh>
         ))}
-        {L && <PartLabel pos={[0.25, -0.3, -0.75]} side="r" dy={90} title={L.bracket.t} sub={L.bracket.s} reg={reg} />}
+        {L && <PartLabel pos={[0.12, -0.18, -0.6]} side="r" dy={90} title={L.bracket.t} sub={L.bracket.s} reg={reg} />}
       </group>
 
-      {/* ───── motor (behind the drum) ───── */}
+      {/* ───── motor (behind the drum, on the plate) ───── */}
       <group ref={motor}>
-        <mesh material={m.alu} position={[0, 0, -0.17]} rotation={[Math.PI / 2, 0, 0]}><cylinderGeometry args={[0.035, 0.035, 0.5, 14]} /></mesh>
-        <mesh material={m.motor} position={[0, 0, -0.58]} rotation={[Math.PI / 2, 0, 0]}><cylinderGeometry args={[0.27, 0.27, 0.42, 40]} /></mesh>
-        {[0.23, -0.23].map((dz) => (
-          <mesh key={dz} material={m.motorDark} position={[0, 0, -0.58 + dz]} rotation={[Math.PI / 2, 0, 0]}><cylinderGeometry args={[0.285, 0.285, 0.07, 40]} /></mesh>
+        <mesh material={m.alu} position={[0, 0, -0.16]} rotation={[Math.PI / 2, 0, 0]}><cylinderGeometry args={[0.025, 0.025, 0.34, 12]} /></mesh>
+        <mesh material={m.motor} position={[0, 0, -0.51]} rotation={[Math.PI / 2, Math.PI / 12, 0]}><cylinderGeometry args={[0.15, 0.15, 0.36, 12]} /></mesh>
+        {[0.2, -0.2].map((dz) => (
+          <mesh key={dz} material={m.motorDark} position={[0, 0, -0.51 + dz]} rotation={[Math.PI / 2, 0, 0]}><cylinderGeometry args={[0.13, 0.15, 0.05, 24]} /></mesh>
         ))}
-        {hi && Array.from({ length: 9 }, (_, k) => (
-          <mesh key={k} material={m.motor} position={[0, 0, -0.58 - 0.16 + k * 0.04]} rotation={[Math.PI / 2, 0, 0]}><cylinderGeometry args={[0.282, 0.282, 0.012, 40]} /></mesh>
-        ))}
-        <mesh material={m.motorDark} position={[0, 0.3, -0.58]}><boxGeometry args={[0.16, 0.09, 0.14]} /></mesh>
-        <mesh material={m.motorDark} position={[0.03, 0.36, -0.58]}><cylinderGeometry args={[0.03, 0.03, 0.04, 12]} /></mesh>
-        <mesh material={m.motorDark} position={[0, -0.28, -0.58]}><boxGeometry args={[0.34, 0.04, 0.3]} /></mesh>
+        {hi && Array.from({ length: 8 }, (_, k) => {
+          const a = (k / 8) * Math.PI * 2;
+          return <mesh key={k} material={m.motor} position={[Math.cos(a) * 0.155, Math.sin(a) * 0.155, -0.51]} rotation={[0, 0, a]}><boxGeometry args={[0.022, 0.012, 0.34]} /></mesh>;
+        })}
+        <mesh material={m.motorDark} position={[0, 0.16, -0.5]}><boxGeometry args={[0.11, 0.06, 0.12]} /></mesh>
+        <mesh material={m.motorDark} position={[0, -0.155, -0.51]}><boxGeometry args={[0.26, 0.03, 0.3]} /></mesh>
         {hi && cableGeo.map((g, i) => <mesh key={i} geometry={g} material={m.cable} />)}
-        {L && <PartLabel pos={[0.29, 0.08, -0.58]} side="r" dy={-50} title={L.motor.t} sub={L.motor.s} reg={reg} />}
+        {L && <PartLabel pos={[0.16, 0.05, -0.51]} side="r" dy={-50} title={L.motor.t} sub={L.motor.s} reg={reg} />}
       </group>
 
       {/* ───── airflow out of the front ───── */}

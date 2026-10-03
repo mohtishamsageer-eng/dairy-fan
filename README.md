@@ -74,13 +74,13 @@ The build is a plain static site in `./out`, so it runs on any host.
 
 | File | What it does |
 |---|---|
-| `src/scene/DairyFan.tsx` | Procedural fan: lathe-turned steel drum (#7AB3CC powder-coat with orange-peel bump), rolled lip, wire handles, mounting tabs, seam + screws; instanced domed wire grid with two flat-bar braces and rim clamps; 3 graphite ABS paddle blades with leading-edge rib, conical shank and an embossed "KHALEEQ FAN" decal; brushed aluminium hub; grey ribbed motor with terminal box and sagging white cables, on a rear steel bracket. Inertial spin-up, motion-blur disc at high RPM, exploded offsets, leader-line labels. |
+| `src/scene/DairyFan.tsx` | Procedural fan matched to the owner's walkaround video: matte grey-teal drum (#7E9CA0) with rolled lip, wire handles, mounting tabs, seam + screws; pale-aqua (#A8D8D4) welded wire guards front and back, with two flat bars over the front grid; 3 black paddle blades with leading-edge rib and an embossed "KHALEEQ FAN" decal, each on a dark cone root; silver three-lobed cast hub; two box-section rear bars carrying a plate with a dark ribbed direct-drive motor and white cables. Inertial spin-up, motion-blur disc at high RPM, exploded offsets, leader-line labels. |
 | `src/scene/Airflow.tsx` | GPU particle stream out of the fan front (all motion in the vertex shader). |
-| `src/scene/Shed.tsx` | Low-poly cattle shed: columns, trusses, roof, 9 stylised cows, 4 more fans, shower line with falling mist. |
+| `src/scene/Shed.tsx` | Free-stall shed modelled on the reference photos: maroon steel portal frames, grey corrugated roof with skylight ridge, central feed alley with hay windrows, blue head-lock rails, ~40 instanced Holsteins eating on both sides, 8 fans hung from the rafters tilted down along the shed, shower lines with mist. The background shifts from studio night to daylight as the shed builds. |
 | `src/scene/StoryScene.tsx` | Canvas, studio lighting (Lightformer environment, no HDRI download), camera rig, `PerformanceMonitor` (drops DPR and particle counts on slow devices). |
 | `src/components/ScrollStory.tsx` | **One GSAP timeline bound to ScrollTrigger (`scrub: 1`)** drives camera, target, screen offset, RPM, explode, labels, shed, install and mist, plus the text panels. Scrolls smoothly forwards and backwards. |
 
-Story map: 0–10% hero spin-up → 10–25% orbit to ¾ → 25–40% top-down → 40–60% exploded view with labels + blueprint grid → 60–70% reassemble with settle shake → 70–85% installed in the shed → 85–100% pull back and wipe to brand blue → Services.
+Story map: 0–10% hero spin-up → 10–25% orbit to ¾ → 25–40% top-down → 40–60% exploded view with labels + blueprint grid → 60–70% reassemble with settle shake → 70–85% the fan flies to its rafter and the camera looks down the feed alley → 85–100% pull back to an aerial view of the shed roof, wipe to brand blue → Services.
 
 ### Performance and fallbacks
 - The page paints a **poster image** first (`public/assets/fan/poster.webp`, plus a portrait version for mobile, ~40 KB each). The 3D bundle is code-split and fades in once its first frames render, behind a spinning-fan % loader. Home page first-load JS is ~219 KB; three.js loads afterwards.
@@ -89,7 +89,8 @@ Story map: 0–10% hero spin-up → 10–25% orbit to ¾ → 25–40% top-down �
 - Regenerate posters and the OG image after changing the model: `npm run build && npx serve out -l 4173`, then in another terminal run `CHROME_PATH=/path/to/chrome npm run poster -- http://localhost:4173`.
 
 ### Not yet done / next steps
-- **Real photos.** No fan photos or reference video were supplied (only the logo). The model follows the written spec in the brief, so compare it with your real fan and send photos for fine-tuning (blade shape, motor size, guard spacing).
+- **Fan model** was matched to the walkaround video (colours, hub, motor, rear frame). Blades are modelled black (as in the brief and the motor-side shots); the video also shows a fan with galvanised silver blades. Say which you want, or both as variants.
+- The video's voice-over could not be transcribed here (speech-to-text model downloads are blocked in this environment).
 - Pre-rendered **MP4 / image-sequence** fallback for low-end phones. Currently they get the static poster plus text; a scroll-scrubbed video can be recorded from the 3D scene once the model is approved.
 - Lottie icons: the service icons are animated SVG/CSS instead, which is lighter.
 - Post-processing (bloom/SMAA) was left out to keep mobile fast; antialiasing is native MSAA.
