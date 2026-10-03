@@ -54,7 +54,7 @@ function useMats() {
       stall: new THREE.MeshStandardMaterial({ color: "#6E7270", roughness: 0.9 }),
       curb: new THREE.MeshStandardMaterial({ color: "#C9C7BF", roughness: 0.8 }),
       hay: new THREE.MeshStandardMaterial({ color: "#C9A65A", roughness: 1, bumpMap: hayTex, bumpScale: 2 }),
-      frame: new THREE.MeshStandardMaterial({ color: "#8E2F2A", roughness: 0.55, metalness: 0.3 }),
+      frame: new THREE.MeshStandardMaterial({ color: "#6F2622", roughness: 0.55, metalness: 0.3 }),
       roof: new THREE.MeshStandardMaterial({ color: "#FFFFFF", map: roofTex, roughness: 0.5, metalness: 0.45, side: THREE.DoubleSide }),
       ground: new THREE.MeshStandardMaterial({ color: "#B59D78", roughness: 1 }),
       sky: new THREE.MeshBasicMaterial({ color: "#F6F9FA", toneMapped: false, fog: false }),
@@ -62,7 +62,7 @@ function useMats() {
       rod: new THREE.MeshStandardMaterial({ color: "#9AA3A8", roughness: 0.4, metalness: 0.8 }),
       wall: new THREE.MeshStandardMaterial({ color: "#D9D6CF", roughness: 0.9 }),
       pipe: new THREE.MeshStandardMaterial({ color: "#B8C0C4", roughness: 0.35, metalness: 0.8 }),
-      white: new THREE.MeshStandardMaterial({ color: "#F1F1EE", roughness: 0.85 }),
+      white: new THREE.MeshStandardMaterial({ color: "#F2F1EC", roughness: 0.85 }),
       black: new THREE.MeshStandardMaterial({ color: "#1B1D1F", roughness: 0.75 }),
       pink: new THREE.MeshStandardMaterial({ color: "#D7A39A", roughness: 0.8 }),
       tag: new THREE.MeshStandardMaterial({ color: "#E9C21D", roughness: 0.5 }),
@@ -70,7 +70,6 @@ function useMats() {
   }, []);
 }
 type M = ReturnType<typeof useMats>;
-type Mat = keyof M;
 
 const B = ({ p, s, m, r }: { p: [number, number, number]; s: [number, number, number]; m: THREE.Material; r?: [number, number, number] }) => (
   <mesh geometry={box} material={m} position={p} scale={s} rotation={r} />
@@ -87,51 +86,91 @@ function Boxes({ mats, material }: { mats: THREE.Matrix4[]; material: THREE.Mate
   return <instancedMesh ref={ref} args={[box, material, mats.length]} frustumCulled={false} />;
 }
 
-// ── cows: every part of every cow is an instance, grouped by material (5 draw calls for the herd)
-type Part = { p: [number, number, number]; s: [number, number, number]; m: Mat; head?: boolean };
-const BODY: Part[] = [
-  { p: [0, 1.05, 0], s: [1.9, 0.88, 0.82], m: "white" },
-  { p: [-0.62, 0.32, -0.25], s: [0.17, 0.66, 0.17], m: "white" }, { p: [-0.62, 0.32, 0.25], s: [0.17, 0.66, 0.17], m: "white" },
-  { p: [0.62, 0.32, -0.25], s: [0.17, 0.66, 0.17], m: "black" }, { p: [0.62, 0.32, 0.25], s: [0.17, 0.66, 0.17], m: "white" },
-  { p: [-0.45, 0.58, 0], s: [0.38, 0.2, 0.42], m: "pink" },
-  { p: [-0.98, 0.95, 0], s: [0.06, 0.75, 0.06], m: "black" },
-  // neck + head (head pivot, lowered to the hay)
-  { p: [0.2, 0, 0], s: [0.5, 0.48, 0.4], m: "black", head: true },
-  { p: [0.56, -0.05, 0], s: [0.46, 0.36, 0.32], m: "black", head: true },
-  { p: [0.6, -0.04, 0], s: [0.42, 0.16, 0.335], m: "white", head: true },
-  { p: [0.83, -0.08, 0], s: [0.12, 0.26, 0.28], m: "pink", head: true },
-  { p: [0.4, 0.15, 0.23], s: [0.08, 0.06, 0.2], m: "black", head: true }, { p: [0.4, 0.15, -0.23], s: [0.08, 0.06, 0.2], m: "black", head: true },
-  { p: [0.4, 0.12, 0.34], s: [0.03, 0.09, 0.07], m: "tag", head: true }, { p: [0.4, 0.12, -0.34], s: [0.03, 0.09, 0.07], m: "tag", head: true },
-];
-const PATCHES: Part[][] = [
-  [{ p: [-0.35, 1.1, 0], s: [0.75, 0.9, 0.84], m: "black" }, { p: [0.62, 1.2, 0], s: [0.45, 0.55, 0.84], m: "black" }],
-  [{ p: [0.1, 1.14, 0], s: [0.9, 0.78, 0.84], m: "black" }],
-  [{ p: [-0.6, 1.0, 0], s: [0.5, 0.92, 0.84], m: "black" }, { p: [0.4, 1.3, 0], s: [0.6, 0.3, 0.84], m: "black" }],
-  [{ p: [0.55, 1.08, 0], s: [0.65, 0.9, 0.84], m: "black" }, { p: [-0.55, 1.3, 0], s: [0.4, 0.3, 0.84], m: "black" }],
+// ── cows: rounded low-poly Holsteins, instanced by (geometry, material): ~12 draw calls for the whole herd
+function holstein(seed: number) {
+  const c = document.createElement("canvas"); c.width = 256; c.height = 128;
+  const g = c.getContext("2d")!;
+  g.fillStyle = "#F2F1EC"; g.fillRect(0, 0, 256, 128);
+  let r = seed * 9301 + 49297; const rnd = () => ((r = (r * 9301 + 49297) % 233280) / 233280);
+  g.fillStyle = "#17191A";
+  for (let k = 0; k < 7; k++) {
+    const cx = rnd() * 256, cy = rnd() * 128, size = 14 + rnd() * 26;
+    for (let j = 0; j < 9; j++) { g.beginPath(); g.ellipse((cx + (rnd() - 0.5) * size * 1.4) % 256, cy + (rnd() - 0.5) * size, size * (0.4 + rnd() * 0.5), size * (0.35 + rnd() * 0.4), rnd() * 3, 0, Math.PI * 2); g.fill(); }
+  }
+  const t = new THREE.CanvasTexture(c); t.wrapS = THREE.RepeatWrapping; t.colorSpace = THREE.SRGBColorSpace; return t;
+}
+const COW_GEO = (() => {
+  const body = new THREE.CapsuleGeometry(0.4, 1.05, 6, 16); body.rotateZ(Math.PI / 2);
+  const neck = new THREE.CylinderGeometry(0.16, 0.22, 0.5, 10); neck.rotateZ(Math.PI / 2);
+  const head = new THREE.CapsuleGeometry(0.15, 0.3, 4, 10); head.rotateZ(Math.PI / 2);
+  return {
+    body, neck, head,
+    leg: new THREE.CylinderGeometry(0.075, 0.058, 0.72, 8),
+    ball: new THREE.SphereGeometry(0.14, 10, 8),
+    tail: new THREE.CylinderGeometry(0.02, 0.015, 0.75, 5),
+    box,
+  };
+})();
+type GeoKey = keyof typeof COW_GEO;
+type Piece = { g: GeoKey; m: string; p: [number, number, number]; s?: [number, number, number]; r?: [number, number, number]; head?: boolean };
+const COW: Piece[] = [
+  { g: "leg", m: "white", p: [0.6, 0.36, 0.2] }, { g: "leg", m: "black", p: [0.6, 0.36, -0.2] },
+  { g: "leg", m: "white", p: [-0.6, 0.36, 0.2] }, { g: "leg", m: "white", p: [-0.6, 0.36, -0.2] },
+  { g: "ball", m: "pink", p: [-0.42, 0.7, 0], s: [1.3, 0.8, 1.3] },
+  { g: "tail", m: "black", p: [-1.0, 0.82, 0], r: [0, 0, -0.12] },
+  { g: "neck", m: "black", p: [0.22, 0, 0], head: true },
+  { g: "head", m: "black", p: [0.62, -0.03, 0], head: true },
+  { g: "box", m: "white", p: [0.64, 0.1, 0], s: [0.36, 0.08, 0.13], head: true },
+  { g: "ball", m: "pink", p: [0.9, -0.06, 0], s: [0.85, 0.95, 1.05], head: true },
+  { g: "box", m: "black", p: [0.44, 0.08, 0.19], s: [0.08, 0.04, 0.2], r: [0.3, 0, 0], head: true },
+  { g: "box", m: "black", p: [0.44, 0.08, -0.19], s: [0.08, 0.04, 0.2], r: [-0.3, 0, 0], head: true },
+  { g: "box", m: "tag", p: [0.44, 0.04, 0.29], s: [0.025, 0.09, 0.07], head: true },
+  { g: "box", m: "tag", p: [0.44, 0.04, -0.29], s: [0.025, 0.09, 0.07], head: true },
 ];
 
-function useHerd() {
+function useHerd(m: M) {
   return useMemo(() => {
-    const out: Record<string, THREE.Matrix4[]> = { white: [], black: [], pink: [], tag: [] };
+    const bodyMats = [1, 2, 3].map((k) => new THREE.MeshStandardMaterial({ map: holstein(k), roughness: 0.8 }));
+    const mats: Record<string, THREE.Material> = { white: m.white, black: m.black, pink: m.pink, tag: m.tag, b0: bodyMats[0], b1: bodyMats[1], b2: bodyMats[2] };
+    const groups = new Map<string, { geo: THREE.BufferGeometry; mat: THREE.Material; list: THREE.Matrix4[] }>();
+    const push = (g: GeoKey, mk: string, mx: THREE.Matrix4) => {
+      const key = g + "|" + mk;
+      if (!groups.has(key)) groups.set(key, { geo: COW_GEO[g], mat: mats[mk], list: [] });
+      groups.get(key)!.list.push(mx);
+    };
     const cow = new THREE.Matrix4(), head = new THREE.Matrix4(), part = new THREE.Matrix4(), tmp = new THREE.Matrix4();
     const q = new THREE.Quaternion(), e = new THREE.Euler(), v = new THREE.Vector3(), sc = new THREE.Vector3();
     let n = 0;
     for (const side of [-1, 1]) {
-      for (let z = LEN0 - 3.2; z > LEN1 + 3; z -= 1.12) {
+      for (let z = LEN0 - 3.2; z > LEN1 + 3; z -= 1.08) {
         n++;
         if ((n * 7) % 11 === 0) continue;                       // a few gaps so the row looks natural
-        const yaw = side < 0 ? 0 : Math.PI;
-        const x = side * (RAIL + 1.2 + ((n * 13) % 5) * 0.03);
-        cow.compose(v.set(x, 0, z + ((n * 5) % 3) * 0.05), q.setFromEuler(e.set(0, yaw + (((n * 3) % 5) - 2) * 0.03, 0)), sc.set(1, 1, 1));
-        head.copy(cow).multiply(tmp.compose(v.set(0.95, 1.22, 0), q.setFromEuler(e.set(0, 0, -0.62 - ((n * 7) % 4) * 0.08)), sc.set(1, 1, 1)));
-        for (const pt of [...BODY, ...PATCHES[n % PATCHES.length]]) {
-          part.compose(v.set(...pt.p), q.identity(), sc.set(...pt.s));
-          out[pt.m].push(new THREE.Matrix4().multiplyMatrices(pt.head ? head : cow, part));
+        const yaw = (side < 0 ? 0 : Math.PI) + (((n * 3) % 5) - 2) * 0.04;
+        cow.compose(v.set(side * (RAIL + 0.85 + ((n * 13) % 5) * 0.04), 0, z), q.setFromEuler(e.set(0, yaw, 0)), sc.set(1, 1, 1));
+        const eating = n % 6 !== 0;
+        head.copy(cow).multiply(tmp.compose(v.set(0.75, 1.2, 0), q.setFromEuler(e.set(((n * 5) % 3 - 1) * 0.12, 0, eating ? -0.95 - ((n * 7) % 3) * 0.06 : -0.25)), sc.set(1, 1, 1)));
+        push("body", "b" + (n % 3), new THREE.Matrix4().multiplyMatrices(cow, part.compose(v.set(0, 1.08, 0), q.identity(), sc.set(1, 1, 0.82))));
+        for (const pc of COW) {
+          part.compose(v.set(...pc.p), q.setFromEuler(e.set(...(pc.r ?? [0, 0, 0]))), sc.set(...(pc.s ?? [1, 1, 1])));
+          push(pc.g, pc.m, new THREE.Matrix4().multiplyMatrices(pc.head ? head : cow, part));
         }
       }
     }
-    return out;
-  }, []);
+    return [...groups.values()];
+  }, [m]);
+}
+
+function Herd({ m }: { m: M }) {
+  const groups = useHerd(m);
+  return <>{groups.map((g, i) => <InstancedGeo key={i} geo={g.geo} mat={g.mat} mats={g.list} />)}</>;
+}
+function InstancedGeo({ geo, mat, mats }: { geo: THREE.BufferGeometry; mat: THREE.Material; mats: THREE.Matrix4[] }) {
+  const ref = useRef<THREE.InstancedMesh>(null!);
+  useLayoutEffect(() => {
+    mats.forEach((mm, i) => ref.current.setMatrixAt(i, mm));
+    ref.current.instanceMatrix.needsUpdate = true;
+  }, [mats]);
+  return <instancedMesh ref={ref} args={[geo, mat, mats.length]} frustumCulled={false} />;
 }
 
 function useRails() {
@@ -187,7 +226,6 @@ function Mist({ level, count }: { level: { v: number }; count: number }) {
 
 export function Shed({ mist, quality }: { mist: { v: number }; quality: "high" | "low" }) {
   const m = useMats();
-  const herd = useHerd();
   const rails = useRails();
   const fanState = useMemo<FanState[]>(() => FAN_SLOTS.map((_, i) => ({ rpm: 13 + (i % 3) * 0.8, explode: 0, labels: 0 })), []);
   const L = LEN0 - LEN1, ZC = (LEN0 + LEN1) / 2;
@@ -237,7 +275,7 @@ export function Shed({ mist, quality }: { mist: { v: number }; quality: "high" |
       <B p={[0, RIDGE + 0.12, ZC]} s={[0.9, 0.04, L + 0.6]} m={m.sky} />
 
       <Boxes mats={rails} material={m.rail} />
-      {(Object.keys(herd) as Mat[]).map((k) => <Boxes key={k} mats={herd[k]} material={m[k]} />)}
+      <Herd m={m} />
 
       {/* fans hung from the rafters (slot 0 = hero fan) */}
       {FAN_SLOTS.map((p, i) => (
