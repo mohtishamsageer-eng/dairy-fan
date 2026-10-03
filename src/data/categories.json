@@ -1,0 +1,10 @@
+[
+  { "id": "dairy-fans", "label": "Dairy Fans", "labelUr": "ڈیری فین" },
+  { "id": "wiring", "label": "Wiring", "labelUr": "وائرنگ" },
+  { "id": "panel-boards", "label": "Panel Boards", "labelUr": "پینل بورڈ" },
+  { "id": "milking-parlour", "label": "Milking Parlour", "labelUr": "ملکنگ پارلر" },
+  { "id": "auto-manual-systems", "label": "Auto / Manual Systems", "labelUr": "آٹو / مینول سسٹم" },
+  { "id": "showering-systems", "label": "Showering Systems", "labelUr": "شاورنگ سسٹم" },
+  { "id": "milking-spare-parts", "label": "Milking Spare Parts", "labelUr": "ملکنگ اسپیئر پارٹس" },
+  { "id": "vacuum-pumps", "label": "Vacuum Pumps", "labelUr": "ویکیوم پمپ" }
+]

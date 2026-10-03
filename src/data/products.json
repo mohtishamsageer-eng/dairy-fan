@@ -1,0 +1,50 @@
+[
+  {
+    "id": "dairy-fan-sample",
+    "name": "Khaleeq Dairy Fan",
+    "nameUr": "خلیق ڈیری فین",
+    "category": "dairy-fans",
+    "images": [],
+    "shortDesc": "Powder-coated steel drum, wire guard, 3-blade rotor with aluminium hub and motor on a steel bracket.",
+    "specs": { "Size": "[PLACEHOLDER]", "Motor": "[PLACEHOLDER]", "Blades": "3 × ABS", "RPM": "[PLACEHOLDER]", "Air Delivery": "[PLACEHOLDER]", "Power": "[PLACEHOLDER]" },
+    "featured": true,
+    "sample": true,
+    "whatsappText": "Assalam o Alaikum, I want a quote for the Khaleeq Dairy Fan"
+  },
+  {
+    "id": "panel-board-sample",
+    "name": "Control Panel Board",
+    "nameUr": "کنٹرول پینل بورڈ",
+    "category": "panel-boards",
+    "images": [],
+    "shortDesc": "Distribution and control panel for fans, showers and pumps.",
+    "specs": { "Type": "[PLACEHOLDER]", "Capacity": "[PLACEHOLDER]" },
+    "featured": false,
+    "sample": true,
+    "whatsappText": "Assalam o Alaikum, I want a quote for a Control Panel Board"
+  },
+  {
+    "id": "milking-spare-parts-sample",
+    "name": "Milking Machine Spare Parts",
+    "nameUr": "ملکنگ مشین اسپیئر پارٹس",
+    "category": "milking-spare-parts",
+    "images": [],
+    "shortDesc": "Spare parts for milking machines. Tell us the part you need.",
+    "specs": {},
+    "featured": false,
+    "sample": true,
+    "whatsappText": "Assalam o Alaikum, I need milking machine spare parts"
+  },
+  {
+    "id": "vacuum-pump-sample",
+    "name": "Vacuum Pump",
+    "nameUr": "ویکیوم پمپ",
+    "category": "vacuum-pumps",
+    "images": [],
+    "shortDesc": "Vacuum pump for milking machines and parlours.",
+    "specs": { "Type": "[PLACEHOLDER]", "Capacity": "[PLACEHOLDER]" },
+    "featured": false,
+    "sample": true,
+    "whatsappText": "Assalam o Alaikum, I want a quote for a Vacuum Pump"
+  }
+]

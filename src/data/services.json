@@ -1,0 +1,110 @@
+[
+  {
+    "slug": "dairy-fans",
+    "icon": "fan",
+    "category": "dairy-fans",
+    "title": "Dairy Fans",
+    "titleUr": "ڈیری فین",
+    "short": "Heavy-duty steel drum fans, manufactured by us for cattle sheds.",
+    "shortUr": "مویشی شیڈ کے لیے ہماری اپنی تیار کردہ مضبوط اسٹیل ڈرم فین۔",
+    "description": "Khaleeq Dairy Fans are manufactured in-house: a powder-coated steel drum, wire guard, three-blade rotor and a direct-mounted electric motor. Built to move large volumes of air across the shed and keep cattle comfortable.",
+    "points": ["Powder-coated steel drum", "Wire guard with flat-bar braces", "3-blade rotor with aluminium hub", "Motor on a steel bracket"],
+    "images": []
+  },
+  {
+    "slug": "fan-installation",
+    "icon": "install",
+    "category": "dairy-fans",
+    "title": "Dairy Fan Installation",
+    "titleUr": "ڈیری فین کی تنصیب",
+    "short": "On-site installation in your shed: positioning, mounting and wiring.",
+    "shortUr": "آپ کے شیڈ میں فین کی تنصیب: جگہ کا تعین، ماؤنٹنگ اور وائرنگ۔",
+    "description": "We do not just sell fans. Our team surveys the shed, decides the fan positions and angles, mounts the fans on columns or trusses and connects them to the control system.",
+    "points": ["Site survey", "Fan placement and angle", "Mounting on columns / trusses", "Connection to control panel"],
+    "images": []
+  },
+  {
+    "slug": "electrical-wiring",
+    "icon": "wiring",
+    "category": "wiring",
+    "title": "Electrical Wiring",
+    "titleUr": "الیکٹریکل وائرنگ",
+    "short": "Complete farm and shed wiring for fans, lights, pumps and machines.",
+    "shortUr": "فارم اور شیڈ کی مکمل وائرنگ۔",
+    "description": "Safe, tidy and serviceable wiring for the whole farm: sheds, milking parlour, pumps and lighting.",
+    "points": ["Shed and farm wiring", "Cable routing and protection", "Earthing and safety devices", "Neat labelling for easy service"],
+    "images": []
+  },
+  {
+    "slug": "panel-boards",
+    "icon": "panel",
+    "category": "panel-boards",
+    "title": "Panel Boards",
+    "titleUr": "پینل بورڈز",
+    "short": "Control and distribution panels built for farm loads.",
+    "shortUr": "فارم کے لوڈ کے مطابق کنٹرول اور ڈسٹری بیوشن پینل۔",
+    "description": "Panel boards that group and protect fan, shower and pump circuits so the farm can be operated from one place.",
+    "points": ["Distribution panels", "Motor control panels", "Protection devices", "Built to the farm's load"],
+    "images": []
+  },
+  {
+    "slug": "milking-parlour",
+    "icon": "milk",
+    "category": "milking-parlour",
+    "title": "Milking Parlour Systems",
+    "titleUr": "ملکنگ پارلر سسٹم",
+    "short": "Milking parlour equipment and its supporting systems.",
+    "shortUr": "ملکنگ پارلر کا سامان اور متعلقہ نظام۔",
+    "description": "Equipment and supporting installation for milking parlours, including vacuum, electrical and control requirements.",
+    "points": ["Parlour equipment", "Vacuum and electrical supply", "Installation and commissioning", "Spare parts and service"],
+    "images": []
+  },
+  {
+    "slug": "auto-manual-control",
+    "icon": "control",
+    "category": "auto-manual-systems",
+    "title": "Auto / Manual Control Systems",
+    "titleUr": "آٹو / مینول کنٹرول سسٹم",
+    "short": "Automatic and manual switching for fans, showers and pumps.",
+    "shortUr": "فین، شاور اور پمپ کے لیے خودکار اور دستی سوئچنگ۔",
+    "description": "Control systems that let you run fans, showers and pumps automatically or by hand, with a clear selector at the panel.",
+    "points": ["Auto / manual selector", "Fan, shower and pump control", "Clear panel layout", "Easy for farm staff to operate"],
+    "images": []
+  },
+  {
+    "slug": "showering-systems",
+    "icon": "shower",
+    "category": "showering-systems",
+    "title": "Showering Systems",
+    "titleUr": "شاورنگ سسٹم",
+    "short": "Cattle cooling showers and misting lines.",
+    "shortUr": "مویشیوں کو ٹھنڈا رکھنے کے لیے شاور اور مسٹنگ لائنیں۔",
+    "description": "Shower and misting lines that wet the cattle while the fans move air over them, cooling them down in hot weather.",
+    "points": ["Cooling showers", "Misting lines", "Pump and piping", "Works together with the fans"],
+    "images": []
+  },
+  {
+    "slug": "milking-spare-parts",
+    "icon": "parts",
+    "category": "milking-spare-parts",
+    "title": "Milking Machine Spare Parts",
+    "titleUr": "ملکنگ مشین اسپیئر پارٹس",
+    "short": "Spare parts to keep your milking machines running.",
+    "shortUr": "ملکنگ مشین چلتی رکھنے کے لیے اسپیئر پارٹس۔",
+    "description": "Spare parts for milking machines, so a small fault does not stop milking.",
+    "points": ["Common wear parts", "Fittings and accessories", "Ask us for a specific part", "Fitting advice"],
+    "images": []
+  },
+  {
+    "slug": "vacuum-pumps",
+    "icon": "pump",
+    "category": "vacuum-pumps",
+    "title": "Vacuum Pumps",
+    "titleUr": "ویکیوم پمپ",
+    "short": "Vacuum pumps and related equipment for milking.",
+    "shortUr": "ملکنگ کے لیے ویکیوم پمپ اور متعلقہ سامان۔",
+    "description": "Vacuum pumps and related equipment for milking machines and parlours.",
+    "points": ["Vacuum pumps", "Related equipment", "Installation support", "Spare parts"],
+    "images": []
+  }
+]
